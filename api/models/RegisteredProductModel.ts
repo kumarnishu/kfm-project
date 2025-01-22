@@ -1,0 +1,64 @@
+import mongoose from "mongoose"
+import { IRegisteredProduct } from "../interfaces/RegisteredProductInterface"
+
+
+const RegisteredProductSchema = new mongoose.Schema<IRegisteredProduct, mongoose.Model<IRegisteredProduct, {}, {}>, {}>({
+    sl_no: {
+        type: String,
+        required: true,
+        trim: true,
+        lowercase: true,
+    },
+    machine:
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Machine',
+        required: true
+    },
+    is_active: {
+        type: Boolean,
+        default: true,
+        required: true
+    }
+    ,
+    customer:
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Customer',
+        required: true
+    }
+    ,
+    warrantyUpto: Date,
+    isInstalled: { type: Boolean, default: false },
+    installationDate: Date,
+    created_at: {
+        type: Date,
+        default: new Date(),
+        required: true,
+
+    },
+
+    created_by: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    updated_at: {
+        type: Date,
+        default: new Date(),
+        required: true,
+
+    },
+
+    updated_by: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    }
+})
+
+export const RegisteredProduct = mongoose.model<IRegisteredProduct, mongoose.Model<IRegisteredProduct, {}, {}>>("RegisteredProduct", RegisteredProductSchema)
+
+
+
+
