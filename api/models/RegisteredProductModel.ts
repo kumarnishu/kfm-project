@@ -4,10 +4,8 @@ import { IRegisteredProduct } from "../interfaces/RegisteredProductInterface"
 
 const RegisteredProductSchema = new mongoose.Schema<IRegisteredProduct, mongoose.Model<IRegisteredProduct, {}, {}>, {}>({
     sl_no: {
-        type: String,
-        required: true,
-        trim: true,
-        lowercase: true,
+        type: Number,
+        required: true
     },
     machine:
     {
@@ -15,12 +13,6 @@ const RegisteredProductSchema = new mongoose.Schema<IRegisteredProduct, mongoose
         ref: 'Machine',
         required: true
     },
-    is_active: {
-        type: Boolean,
-        default: true,
-        required: true
-    }
-    ,
     customer:
     {
         type: mongoose.Schema.Types.ObjectId,
@@ -29,8 +21,9 @@ const RegisteredProductSchema = new mongoose.Schema<IRegisteredProduct, mongoose
     }
     ,
     warrantyUpto: Date,
-    isInstalled: { type: Boolean, default: false },
     installationDate: Date,
+    amcStartDate: Date,
+    amcEndDate: Date,
     created_at: {
         type: Date,
         default: new Date(),

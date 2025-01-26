@@ -32,11 +32,7 @@ const SparePartSchema = new mongoose.Schema<ISparePart, mongoose.Model<ISparePar
     price: {
         type: Number, default: 0
     },
-    is_active: {
-        type: Boolean,
-        default: true,
-        required: true
-    },
+    
     created_at: {
         type: Date,
         default: new Date(),

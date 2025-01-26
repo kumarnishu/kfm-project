@@ -10,7 +10,6 @@ import { Asset } from "../interfaces/UserInterface";
 
 export class MachineController {
 
-
     public async CreateMachine(req: Request, res: Response, next: NextFunction) {
         let body = JSON.parse(req.body.body)
         const {
@@ -34,7 +33,7 @@ export class MachineController {
             const doc = await uploadFileToCloud(req.file.buffer, storageLocation, req.file.originalname)
 
             if (doc) {
-                document=doc
+                document = doc
             }
             else {
                 return res.status(500).json({ message: "file uploading error" })
@@ -43,7 +42,7 @@ export class MachineController {
 
         }
         await new Machine({
-            name, model,photo:document,
+            name, model, photo: document,
             created_at: new Date(),
             updated_at: new Date(),
             created_by: req.user,
@@ -100,22 +99,25 @@ export class MachineController {
     }
 
     public async GetAllMachines(req: Request, res: Response, next: NextFunction) {
+        let search = req.query.search
         let machines: IMachine[] = []
         let result: GetMachineDto[] = []
-        machines = await Machine.find().populate('created_by').populate('updated_by').sort('-created_at')
-
+        if (search)
+            machines = await Machine.find({
+                $or: [
+                    { name: { $regex: search, $options: 'i' } },
+                    { model: { $regex: search, $options: 'i' } },
+                ]
+            }).populate('created_by').populate('updated_by').sort('-created_at').limit(10)
+        else
+            machines = await Machine.find().populate('created_by').populate('updated_by').sort('-created_at').limit(10)
         for (let i = 0; i < machines.length; i++) {
             let machine = machines[i]
             result.push({
                 _id: machine._id,
                 name: machine.name,
                 model: machine.model,
-                photo: machine.photo?.public_url || "",
-                is_active: machine.is_active,
-                created_at: moment(machine.created_at).format("DD/MM/YYYY"),
-                updated_at: moment(machine.updated_at).format("DD/MM/YYYY"),
-                created_by: { id: machine.created_by._id, label: machine.created_by.username },
-                updated_by: { id: machine.updated_by._id, label: machine.updated_by.username }
+                photo: machine.photo?.public_url || ""
             })
         }
         return res.status(200).json(result)

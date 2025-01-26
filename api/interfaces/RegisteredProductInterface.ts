@@ -4,13 +4,13 @@ import { IUser } from "./UserInterface"
 
 export type IRegisteredProduct = {
     _id: string,
-    sl_no: string,
+    sl_no: number,
     machine: IMachine,
-    is_active: boolean,
     customer: ICustomer,
     warrantyUpto: Date,
-    isInstalled: boolean,
     installationDate: Date,
+    amcStartDate: Date,
+    amcEndDate: Date,
     created_at: Date,
     updated_at: Date,
     created_by: IUser,

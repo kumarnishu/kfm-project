@@ -8,47 +8,60 @@ const ServiceRequestSchema = new mongoose.Schema<IServiceRequest, mongoose.Model
         trim: true,
         lowercase: true,
     },
-    paymentMode: {
+    paymentmode: {
         type: String,
         trim: true,
         lowercase: true,
     },
     payable_amount: { type: Number, default: 0 },
+    cash_payment: { type: Number, default: 0 },
+    upi_payment: { type: Number, default: 0 },
+    discount_amount: { type: Number, default: 0 },
     paid_amount: { type: Number, default: 0 },
     happy_code: String,
+    paymentDate:Date,
     product:
     {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'RegisteredProduct',
         required: true
-    },
-    paymentDate: Date,
-    created_at: {
-        type: Date,
-        default: new Date(),
-        required: true,
-
-    },
+    }, 
+    customer:
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Customer',
+        required: true
+    },  
+    machine:
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Machine',
+        required: true
+    }, 
     closed_on: {
         type: Date,
     },
-    approved_on: {
-        type: Date,
+    problem: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Problem',
+    },
+    solution: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Solution',
     },
     assigned_engineer: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    },
-    isApproved: {
-        type: Boolean, default: false
-    },
-    approvedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
     closed_by: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+    },
+    created_at: {
+        type: Date,
+        default: new Date(),
+        required: true,
+
     },
     created_by: {
         type: mongoose.Schema.Types.ObjectId,
@@ -68,6 +81,7 @@ const ServiceRequestSchema = new mongoose.Schema<IServiceRequest, mongoose.Model
         required: true
     }
 })
+
 const SolutionSchema = new mongoose.Schema<ISolution, mongoose.Model<ISolution, {}, {}>, {}>({
     solution: {
         type: String,
@@ -93,16 +107,10 @@ const SolutionSchema = new mongoose.Schema<ISolution, mongoose.Model<ISolution, 
         bucket: { type: String },
         created_at: Date
     }],
-    request: {
+    parts: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'ServiceRequest',
-        required: true
-    },
-    product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'RegisteredProduct',
-        required: true
-    },
+        ref: 'SparePart'
+    }],
     created_at: {
         type: Date,
         default: new Date(),
@@ -154,16 +162,6 @@ const ProblemSchema = new mongoose.Schema<IProblem, mongoose.Model<IProblem, {},
         bucket: { type: String },
         created_at: Date
     }],
-    request: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'ServiceRequest',
-        required: true
-    },
-    product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'RegisteredProduct',
-        required: true
-    },
     created_at: {
         type: Date,
         default: new Date(),

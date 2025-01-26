@@ -14,18 +14,19 @@ export class RegisteredProductController {
             machine,
             customer,
             warrantyUpto,
-            isInstalled,
-            installationDate
+            installationDate,
+            amcStartDate,
+            amcEndDate
         } = req.body as CreateOrEditRegisteredProductDto
         if (!sl_no || !machine || !customer) {
             return res.status(400).json({ message: "please fill all required fields" })
         }
 
-        if (await RegisteredProduct.findOne({ sl_no: sl_no.toLowerCase() }))
+        if (await RegisteredProduct.findOne({ sl_no: sl_no }))
             return res.status(400).json({ message: "already exists this product" })
 
         let product = await new RegisteredProduct({
-            sl_no, machine, customer, isInstalled,
+            sl_no, machine, customer,
             created_at: new Date(),
             updated_at: new Date(),
             created_by: req.user,
@@ -35,6 +36,10 @@ export class RegisteredProductController {
             product.warrantyUpto = new Date(warrantyUpto);
         if (installationDate)
             product.installationDate = new Date(installationDate);
+        if (amcStartDate)
+            product.installationDate = new Date(amcStartDate);
+        if (amcEndDate)
+            product.installationDate = new Date(amcEndDate);
         await product.save()
         return res.status(201).json({ message: "success" })
 
@@ -48,14 +53,14 @@ export class RegisteredProductController {
             sl_no,
             machine,
             customer,
-            warrantyUpto,
-            isInstalled,
-            installationDate } = req.body as CreateOrEditRegisteredProductDto
+            amcStartDate,
+            amcEndDate
+        } = req.body as CreateOrEditRegisteredProductDto
         if (!sl_no || !machine || !customer) {
             return res.status(400).json({ message: "please fill all required fields" })
         }
-        if (productTmp.sl_no !== sl_no.toLowerCase())
-            if (await RegisteredProduct.findOne({ sl_no: sl_no.toLowerCase() }))
+        if (productTmp.sl_no !== sl_no)
+            if (await RegisteredProduct.findOne({ sl_no: sl_no }))
                 return res.status(400).json({ message: "already exists this register product" })
         productTmp.sl_no = sl_no;
         if (customer) {
@@ -68,13 +73,12 @@ export class RegisteredProductController {
             if (obj)
                 productTmp.machine = obj;
         }
-        productTmp.isInstalled = isInstalled;
         productTmp.updated_at = new Date();
 
-        if (warrantyUpto)
-            productTmp.warrantyUpto = new Date(warrantyUpto);
-        if (installationDate)
-            productTmp.installationDate = new Date(installationDate);
+        if (amcStartDate)
+            productTmp.amcStartDate = new Date(amcStartDate);
+        if (amcEndDate)
+            productTmp.amcEndDate = new Date(amcEndDate);
         if (req.user)
             productTmp.updated_by = req.user
         await productTmp.save()
@@ -83,9 +87,13 @@ export class RegisteredProductController {
     }
 
     public async GetAllRegisteredProducts(req: Request, res: Response, next: NextFunction) {
+        let search = req.query.search
         let products: IRegisteredProduct[] = []
         let result: GetRegisteredProductDto[] = []
-        products = await RegisteredProduct.find({ customer: req.user.customer }).populate('machine').populate('customer').populate('created_by').populate('updated_by').sort('-created_at')
+        if (search)
+            products = await RegisteredProduct.find({ sl_no: search }).populate('machine').populate('customer').populate('created_by').populate('updated_by').sort('-created_at').limit(10)
+        else
+            products = await RegisteredProduct.find().populate('machine').populate('customer').populate('created_by').populate('updated_by').sort('-created_at').limit(10)
 
         for (let i = 0; i < products.length; i++) {
             let product = products[i]
@@ -95,14 +103,36 @@ export class RegisteredProductController {
                 machine_photo: product.machine.photo?.public_url || "",
                 machine: { id: product.machine._id, label: product.machine.name },
                 customer: { id: product.customer._id, label: product.customer.name },
-                is_active: product.is_active,
-                isInstalled: product.isInstalled,
-                warrantyUpto: product.warrantyUpto?new Date(product.warrantyUpto).toString() :"",
-                installationDate: product.installationDate?new Date(product.installationDate).toString() : "",
-                created_at: moment(product.created_at).format("DD/MM/YYYY"),
-                updated_at: moment(product.updated_at).format("DD/MM/YYYY"),
-                created_by: { id: product.created_by._id, label: product.created_by.username },
-                updated_by: { id: product.updated_by._id, label: product.updated_by.username }
+                warrantyUpto: product.warrantyUpto ? new Date(product.warrantyUpto).toString() : "",
+                installationDate: product.installationDate ? new Date(product.installationDate).toString() : "",
+                amcStartDate: product.amcStartDate ? new Date(product.amcStartDate).toString() : "",
+                amcEndDate: product.amcEndDate ? new Date(product.amcEndDate).toString() : ""
+            })
+        }
+        return res.status(200).json(result)
+    }
+    public async GetMyRegisteredProducts(req: Request, res: Response, next: NextFunction) {
+        let search = req.query.search
+        let products: IRegisteredProduct[] = []
+        let result: GetRegisteredProductDto[] = []
+        if (search)
+            products = await RegisteredProduct.find({ customer: req.user.customer, sl_no: search }).populate('machine').populate('customer').populate('created_by').populate('updated_by').sort('-created_at').limit(10)
+        else
+            products = await RegisteredProduct.find({ customer: req.user.customer }).populate('machine').populate('customer').populate('created_by').populate('updated_by').sort('-created_at').limit(10)
+
+        for (let i = 0; i < products.length; i++) {
+            let product = products[i]
+            result.push({
+                _id: product._id,
+                sl_no: product.sl_no,
+                machine_photo: product.machine.photo?.public_url || "",
+                machine: { id: product.machine._id, label: product.machine.name },
+                customer: { id: product.customer._id, label: product.customer.name },
+                warrantyUpto: product.warrantyUpto ? new Date(product.warrantyUpto).toString() : "",
+                installationDate: product.installationDate ? new Date(product.installationDate).toString() : "",
+                amcStartDate: product.amcStartDate ? new Date(product.amcStartDate).toString() : "",
+                amcEndDate: product.amcEndDate ? new Date(product.amcEndDate).toString() : "",
+              
             })
         }
         return res.status(200).json(result)

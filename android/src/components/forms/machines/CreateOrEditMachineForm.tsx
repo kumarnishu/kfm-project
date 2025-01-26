@@ -57,6 +57,7 @@ function CreateOrEditMachineForm({
         onSubmit: (values) => {
             let formData = new FormData();
             if (file) {
+                //@ts-ignore
                 formData.append('file', {
                     uri: file.uri,
                     type: file.type,
@@ -153,7 +154,7 @@ function CreateOrEditMachineForm({
                     <Button
                         mode="contained"
                         buttonColor="red"
-                        style={{ padding: 5, borderRadius: 10 }}
+                        style={{ padding: 5, marginTop: 50, borderRadius: 10 }}
                         onPress={() => formik.handleSubmit()}
                         loading={isLoading}
                         disabled={isLoading || !validated}
@@ -194,8 +195,8 @@ const styles = StyleSheet.create({
     },
     input: {
         marginBottom: 15,
-        paddingVertical:10,
-        fontSize:18,
+        paddingVertical: 10,
+        fontSize: 18,
         backgroundColor: 'white',
     },
     divider: {

@@ -107,9 +107,18 @@ export class SparePartController {
     }
 
     public async GetAllSpareParts(req: Request, res: Response, next: NextFunction) {
+        let search = req.query.search
         let parts: ISparePart[] = []
         let result: GetSparePartDto[] = []
-        parts = await SparePart.find().populate('compatible_machines').populate('created_by').populate('updated_by').sort('-created_at')
+        if (search)
+            parts = await SparePart.find({
+                $or: [
+                    { partno: { $regex: search, $options: 'i' } },
+                    { name: { $regex: search, $options: 'i' } },
+                ]
+            }).populate('compatible_machines').populate('created_by').populate('updated_by').sort('-created_at').limit(10)
+        else
+            parts = await SparePart.find().populate('compatible_machines').populate('created_by').populate('updated_by').sort('-created_at').limit(10)
 
         for (let i = 0; i < parts.length; i++) {
             let part = parts[i]
@@ -120,11 +129,6 @@ export class SparePartController {
                 partno: part.partno,
                 photo: part.photo?.public_url || "",
                 compatible_machines: part.compatible_machines && part.compatible_machines.map((m) => { return { id: m._id, label: m.name } }),
-                is_active: part.is_active,
-                created_at: moment(part.created_at).format("DD/MM/YYYY"),
-                updated_at: moment(part.updated_at).format("DD/MM/YYYY"),
-                created_by: { id: part.created_by._id, label: part.created_by.username },
-                updated_by: { id: part.updated_by._id, label: part.updated_by.username }
             })
         }
         return res.status(200).json(result)
@@ -134,17 +138,16 @@ export class SparePartController {
         let parts: ISparePart[] = []
         let result: DropDownDto[] = []
         parts = await SparePart.find().populate('created_by').populate('updated_by').sort('-created_at')
-        result = parts.map((c) => { return { id: c._id, label: c.name, value: c.name } })
-
+        result = parts.map((c) => { return { id: c._id, label: c.name } })
         return res.status(200).json(result)
     }
 
-    public async EditSparePartMachines(req: Request, res: Response, next: NextFunction) {
+    public async AssignMachinesToSpareParts(req: Request, res: Response, next: NextFunction) {
         const { machine_ids, part_id } = req.body as EditSparePartMachinesDto
 
         if (machine_ids && machine_ids.length === 0)
             return res.status(400).json({ message: "please select one machine " })
-        await SparePart.findByIdAndUpdate(part_id,{compatible_machines:machine_ids})
+        await SparePart.findByIdAndUpdate(part_id, { compatible_machines: machine_ids })
         return res.status(200).json({ message: "successfull" })
     }
 

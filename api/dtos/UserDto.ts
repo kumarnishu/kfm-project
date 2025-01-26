@@ -6,15 +6,8 @@ export type GetUserDto = {
     mobile: string,
     email: string,
     dp: string,
-    is_active:boolean,
     customer: DropDownDto,
     role: string,//admin,engineer,owner,staff
-    mobile_verified: boolean,
-    email_verified: boolean,
-    created_at: string,
-    updated_at: string,
-    created_by: DropDownDto,
-    updated_by: DropDownDto
 }
 export type CreateOrEditUserDto = {
     customer:string,

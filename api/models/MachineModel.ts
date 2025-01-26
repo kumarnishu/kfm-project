@@ -14,6 +14,10 @@ const MachineSchema = new mongoose.Schema<IMachine, mongoose.Model<IMachine, {},
         trim: true,
         lowercase: true,
     },
+    
+    service_charge: {
+        type: Number, default: 0
+    },
     photo: {
         _id: { type: String },
         filename: { type: String },
@@ -22,11 +26,6 @@ const MachineSchema = new mongoose.Schema<IMachine, mongoose.Model<IMachine, {},
         size: { type: String },
         bucket: { type: String },
         created_at: Date
-    },
-    is_active: {
-        type: Boolean,
-        default: true,
-        required: true
     },
     created_at: {
         type: Date,

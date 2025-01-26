@@ -26,11 +26,13 @@ const ServiceRequestDetailsScreen: React.FC<Props> = ({ route, navigation }) => 
   const { data, isSuccess, isLoading, refetch, isError } = useQuery<
     AxiosResponse<GetServiceRequestDetailedDto>,
     BackendError
-  >(['request-detailed'], async () => GetServiceRequest({ id: id }));
+  >(['request-detailed', id], async () => GetServiceRequest({ id: id }));
+
 
   useEffect(() => {
-    if (isSuccess && data) setRequest(data.data);
-  }, [isSuccess]);
+    if (isSuccess && data)
+      setRequest(data.data);
+  }, [isSuccess, data]);
 
   if (isLoading) {
     return (
@@ -107,7 +109,15 @@ const ServiceRequestDetailsScreen: React.FC<Props> = ({ route, navigation }) => 
         columnWrapperStyle={styles.columnWrapper}
         contentContainerStyle={styles.listContent}
       />
-      <Text style={styles.sectionTitle}>Solutions with attached media by Engineer</Text>
+      
+
+      {!request?.assigned_engineer && <Button style={{ marginVertical: 50 }} labelStyle={{ fontSize: 20 }}>Assign Engineer</Button>}
+      {
+        request?.assigned_engineer && <>
+          <Text style={styles.sectionTitle}>Solutions with attached media by Engineer</Text>
+          {!request?.solution && user?.role == "engineer" &&<SelectMediaComponent files={files} setFiles={setFiles} />}
+        </>
+      }
       <FlatList
         data={solutionmediaItems}
         keyExtractor={(item, index) => `solution-media-${index}`}
@@ -118,14 +128,13 @@ const ServiceRequestDetailsScreen: React.FC<Props> = ({ route, navigation }) => 
       />
       {user?.role == "engineer" || user?.role == 'admin' &&
         <>
-          {!request?.solution && <SelectMediaComponent files={files} setFiles={setFiles} />}
           {request?.assigned_engineer && request?.solution && (
             <Button mode="contained">Close Request</Button>
           )}
-          {media && <ViewMediaDialog dialog={dialog} setDialog={setDialog} media={media} />}
 
         </>
       }
+      {media && <ViewMediaDialog dialog={dialog} setDialog={setDialog} media={media} />}
     </View>
   );
 };

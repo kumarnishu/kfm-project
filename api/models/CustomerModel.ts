@@ -25,11 +25,6 @@ const CustomerSchema = new mongoose.Schema<ICustomer, mongoose.Model<ICustomer, 
         required: true,
         lowercase: true,
     },
-    is_active: {
-        type: Boolean,
-        default: true,
-        required: true
-    },
     created_at: {
         type: Date,
         default: new Date(),

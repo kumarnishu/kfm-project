@@ -8,7 +8,6 @@ export type ISparePart = {
     photo: Asset,
     compatible_machines: IMachine[]
     price: number,
-    is_active: boolean,
     created_at: Date,
     updated_at: Date,
     created_by: IUser,

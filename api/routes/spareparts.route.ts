@@ -14,5 +14,5 @@ router.route("/parts")
     .get(isAuthenticatedUser, controller.GetAllSpareParts)
 router.get("/dropdown/parts", isAuthenticatedUser, controller.GetSparePartsForDropdown)
 router.route("/parts/:id").put(isAuthenticatedUser, upload.single('file'), controller.UpdateSparePart)
-router.patch("/parts/machines/edit", isAuthenticatedUser, controller.EditSparePartMachines)
+router.patch("/parts/machines/edit", isAuthenticatedUser, controller.AssignMachinesToSpareParts)
 export default router;

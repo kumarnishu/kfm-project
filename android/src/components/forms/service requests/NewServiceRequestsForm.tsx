@@ -50,6 +50,7 @@ function NewServiceRequestsForm({
         onSubmit: (values) => {
             let formData = new FormData();
             if (files && files.length > 0) {
+                //@ts-ignore
                 files.forEach((file) => formData.append('files', {
                     uri: file.asset?.uri,
                     type: file.asset?.type,
@@ -111,7 +112,7 @@ function NewServiceRequestsForm({
                     <Button
                         mode="contained"
                         buttonColor="red"
-                        style={{ padding: 5, borderRadius: 10 }}
+                        style={{ padding: 5, marginTop: 50, borderRadius: 10 }}
                         onPress={() => formik.handleSubmit()}
                         loading={isLoading}
                         disabled={isLoading}

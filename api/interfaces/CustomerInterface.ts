@@ -6,7 +6,6 @@ export type ICustomer = {
     address: string,
     email: string,
     mobile: string,
-    is_active: boolean,
     created_at: Date,
     updated_at: Date,
     created_by: IUser,

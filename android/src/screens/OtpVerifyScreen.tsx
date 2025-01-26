@@ -51,6 +51,10 @@ const OtpVerifyScreen = ({ route }: Props) => {
                 mutate({ mobile: mobile, otp: Number(otp) })
             }, 2000);
         }
+        // else{
+        //     mutate({ mobile: mobile, otp: Number(673762) })
+
+        // }
     }, [otp])
 
 

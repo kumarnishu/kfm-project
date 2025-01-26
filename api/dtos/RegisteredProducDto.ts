@@ -1,29 +1,26 @@
 import { DropDownDto } from "./DropDownDto"
 
 export type CreateOrEditRegisteredProductDto = {
-    sl_no: string,
+    sl_no: number,
     machine: string,
     customer: string,
     warrantyUpto?: string,
-    isInstalled: boolean,
+    amcEndDate?: string,
+    amcStartDate?: string
     installationDate?: string,
 }
 
 
 export type GetRegisteredProductDto = {
     _id: string,
-    sl_no: string,
+    sl_no: number,
     machine: DropDownDto,
-    machine_photo:string,
+    machine_photo: string,
     customer: DropDownDto,
-    is_active: boolean,
     warrantyUpto: string,
-    isInstalled: boolean,
     installationDate: string,
-    created_at: string,
-    updated_at: string,
-    created_by: DropDownDto,
-    updated_by: DropDownDto,
+    amcStartDate: string,
+    amcEndDate: string
 }
 
 

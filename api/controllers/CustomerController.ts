@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express"
-import moment from "moment"
 import isEmail from "validator/lib/isEmail";
 import { Customer } from "../models/CustomerModel";
 import { CreateOrEditCustomerDto, GetCustomerDto } from "../dtos/CustomerDto";
@@ -14,13 +13,14 @@ export class CustomerController {
     public async CreateCustomerFromAdmin(req: Request, res: Response, next: NextFunction) {
         let {
             name,
+            username,
             mobile,
             email,
             address,
         } = req.body as CreateOrEditCustomerDto
 
         // validations
-        if (!name || !address || !mobile)
+        if (!name || !username || !address || !mobile)
             return res.status(400).json({ message: "fill all the required fields" });
         if (!isEmail(email))
             return res.status(400).json({ message: "please provide valid email id" });
@@ -38,15 +38,16 @@ export class CustomerController {
             mobile,
             email,
             name,
+            username,
             address,
             created_at: new Date(),
             updated_at: new Date(),
         })
 
         let user = new User({
-            username: name,
             mobile,
             email,
+            username,
             customer: newCustomer,
             is_active: true,
             created_at: new Date(),
@@ -161,9 +162,19 @@ export class CustomerController {
         res.status(201).json({ message: "success" })
     }
     public async GetAllCustomers(req: Request, res: Response, next: NextFunction) {
+        let search = req.query.search
         let customers: ICustomer[] = []
         let result: GetCustomerDto[] = []
-        customers = await Customer.find().populate('created_by').populate('updated_by').sort('-created_at')
+        if (search)
+            customers = await Customer.find(
+                {
+                    $or: [
+                        { mobile: { $regex: search, $options: 'i' } },
+                        { name: { $regex: search, $options: 'i' } },
+                    ]
+                }).populate('created_by').populate('updated_by').sort('-created_at').limit(10)
+        else
+            customers = await Customer.find().populate('created_by').populate('updated_by').sort('-created_at').limit(10)
 
         for (let i = 0; i < customers.length; i++) {
             let customer = customers[i]
@@ -176,12 +187,7 @@ export class CustomerController {
                 owner: owner ? owner.username : "NA",
                 address: customer.address,
                 email: customer.email,
-                is_active: customer.is_active,
                 users: users.length || 0,
-                created_at: moment(customer.created_at).format("DD/MM/YYYY"),
-                updated_at: moment(customer.updated_at).format("DD/MM/YYYY"),
-                created_by: { id: customer.created_by._id, label: customer.created_by.username },
-                updated_by: { id: customer.updated_by._id, label: customer.updated_by.username }
             })
         }
         return res.status(200).json(result)
@@ -208,15 +214,7 @@ export class CustomerController {
                 mobile: u.mobile,
                 role: u.role,
                 customer: { id: u.customer._id, label: u.customer.name },
-                dp: u.dp?.public_url || "",
-                email_verified: u.email_verified,
-                mobile_verified: u.mobile_verified,
-                is_active: u.is_active,
-                last_login: moment(u.last_login).format("lll"),
-                created_at: moment(u.created_at).format("DD/MM/YYYY"),
-                updated_at: moment(u.updated_at).format("DD/MM/YYYY"),
-                created_by: { id: u.created_by._id, label: u.created_by.username },
-                updated_by: { id: u.updated_by._id, label: u.updated_by.username }
+                dp: u.dp?.public_url || ""
             }
         })
         return res.status(200).json(result)
@@ -234,15 +232,7 @@ export class CustomerController {
                 mobile: u.mobile,
                 role: u.role,
                 customer: { id: u.customer._id, label: u.customer.name },
-                dp: u.dp?.public_url || "",
-                email_verified: u.email_verified,
-                mobile_verified: u.mobile_verified,
-                is_active: u.is_active,
-                last_login: moment(u.last_login).format("lll"),
-                created_at: moment(u.created_at).format("DD/MM/YYYY"),
-                updated_at: moment(u.updated_at).format("DD/MM/YYYY"),
-                created_by: { id: u.created_by._id, label: u.created_by.username },
-                updated_by: { id: u.updated_by._id, label: u.updated_by.username }
+                dp: u.dp?.public_url || ""
             }
         })
         return res.status(200).json(result)

@@ -8,15 +8,15 @@ type Props = {
     product?: GetRegisteredProductDto
 }
 
-function ApproveOrRejectServiceRequestDialog({ product, dialog, setDialog }: Props) {
+function CloseServiceRequestDialog({ product, dialog, setDialog }: Props) {
 
     return (
-       <Dialog fullScreen={false} visible={dialog === 'ApproveOrRejectServiceRequestDialog'} handleClose={() => setDialog(undefined)}
+       <Dialog fullScreen={false} visible={dialog === 'CloseServiceRequestDialog'} handleClose={() => setDialog(undefined)}
         >
             {product && <NewServiceRequestsForm product={product} setDialog={setDialog} />}
         </Dialog>
     )
 }
 
-export default ApproveOrRejectServiceRequestDialog
+export default CloseServiceRequestDialog
 

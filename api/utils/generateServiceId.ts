@@ -1,19 +1,17 @@
-export function generateServiceCode(kfm:string, serviceType = "default", date = new Date()) {
-    if (!kfm || typeof kfm !== "string") {
-        throw new Error("KFM keyword must be a non-empty string.");
-    }
-
-    // Format the date as YYYYMMDD
-    const formattedDate = date
-        .toISOString()
-        .slice(0, 10)
-        .replace(/-/g, "");
-
-    // Generate a random 4-digit number for uniqueness
-    const randomDigits = Math.floor(1000 + Math.random() * 9000);
-
-    // Combine components to form the service code
-    const serviceCode = `${kfm.toUpperCase()}-${serviceType.toUpperCase()}-${formattedDate}-${randomDigits}`;
-
+function generateServiceCode(number:number) {
+    // Get current date
+    const now = new Date();
+    
+    // Format date as YYYYMMDD
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(now.getDate()).padStart(2, '0');
+    
+    // Format number to be at least 4 digits, padded with zeros
+    const formattedNumber = String(number).padStart(4, '0');
+    
+    // Combine date and formatted number
+    const serviceCode = `${year}${month}${day}-${formattedNumber}`;
+    
     return serviceCode;
 }

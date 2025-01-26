@@ -57,7 +57,7 @@ export class EngineerController {
         if (!await Customer.findById(customer))
             return res.status(403).json({ message: `customer not exists` });
 
-        await  User.findByIdAndUpdate(id,{
+        await User.findByIdAndUpdate(id, {
             username,
             customer,
             email,
@@ -68,9 +68,18 @@ export class EngineerController {
         res.status(201).json({ message: "success" })
     }
     public async GetAllEngineers(req: Request, res: Response, next: NextFunction) {
-
+        let search = req.query.search
         let result: GetUserDto[] = []
-        let users: IUser[] = await User.find({ role: 'engineer' }).populate("created_by").populate("updated_by").populate("customer").sort('-last_login')
+        let users: IUser[] = []
+        if (search)
+            await User.find({ role: 'engineer' }, {
+                $or: [
+                    { mobile: { $regex: search, $options: 'i' } },
+                    { username: { $regex: search, $options: 'i' } },
+                ]
+            }).populate("created_by").populate("updated_by").populate("customer").sort('-last_login').limit(10)
+        else
+            await User.find({ role: 'engineer' }).populate("created_by").populate("updated_by").populate("customer").sort('-last_login').limit(10)
 
         result = users.map((u) => {
             return {
@@ -85,10 +94,6 @@ export class EngineerController {
                 mobile_verified: u.mobile_verified,
                 is_active: u.is_active,
                 last_login: moment(u.last_login).format("lll"),
-                created_at: moment(u.created_at).format("DD/MM/YYYY"),
-                updated_at: moment(u.updated_at).format("DD/MM/YYYY"),
-                created_by: { id: u.created_by._id, label: u.created_by.username },
-                updated_by: { id: u.updated_by._id, label: u.updated_by.username }
             }
         })
         return res.status(200).json(result)

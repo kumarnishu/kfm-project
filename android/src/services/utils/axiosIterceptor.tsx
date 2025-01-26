@@ -1,4 +1,5 @@
 import axios from "axios";
+//@ts-ignore
 import { API_URL } from '@env';
 console.log(API_URL)
 const VITE_SERVER_URL = API_URL;

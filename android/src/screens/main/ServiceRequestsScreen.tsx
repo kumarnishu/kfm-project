@@ -24,7 +24,6 @@ const ServiceRequestsScreen: React.FC<Props> = ({ navigation }) => {
   const [filter, setFilter] = useState<string | undefined>()
   const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetServiceRequestDto[]>, BackendError>(["requests"], async () => GetAllServiceRequests())
 
-  console.log(requests)
   // Pull-to-refresh handler
   const onRefresh = async () => {
     setRefreshing(true);
@@ -55,7 +54,7 @@ const ServiceRequestsScreen: React.FC<Props> = ({ navigation }) => {
 
     <Card style={styles.card} onPress={() => {
       setRequest(item)
-      request && navigation.navigate('ServiceRequestDetailsScreen', { id: request._id })
+      request && navigation.navigate('ServiceRequestDetailsScreen', { id: item._id })
     }}>
       <Card.Content style={styles.cardContent}>
         <View style={styles.textContainer}>

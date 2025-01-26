@@ -2,16 +2,17 @@ import { NextFunction, Request, Response } from 'express';
 import { deleteToken, sendUserToken } from '../middlewares/auth.middleware';
 import isEmail from "validator/lib/isEmail";
 import { sendEmail } from '../utils/sendEmail.util';
-import moment from 'moment';
-import { CreateOrEditCustomerDto } from '../dtos/CustomerDto';
-import { GetUserDto, LoginDto, SendOrVerifyEmailDto } from '../dtos/UserDto';
 import { Customer } from '../models/CustomerModel';
 import { User } from '../models/UserModel';
+import { CreateOrEditCustomerDto } from '../dtos/CustomerDto';
+import { GetUserDto, LoginDto, SendOrVerifyEmailDto } from '../dtos/UserDto';
+
 
 
 export class UserController {
 
     public async SignUpAsCustomerOrAdmin(req: Request, res: Response, next: NextFunction) {
+
         let {
             name,
             mobile,
@@ -21,7 +22,7 @@ export class UserController {
         } = req.body as CreateOrEditCustomerDto
 
         // validations
-        if (!name || !address || !mobile)
+        if (!name || !username || !address || !mobile)
             return res.status(400).json({ message: "fill all the required fields" });
         if (!isEmail(email))
             return res.status(400).json({ message: "please provide valid email id" });
@@ -94,14 +95,7 @@ export class UserController {
             mobile: user.mobile,
             role: user.role,
             customer: { id: user.customer._id, label: user.customer.name },
-            dp: "",
-            email_verified: user.email_verified,
-            mobile_verified: user.mobile_verified,
-            is_active: true,
-            created_at: moment(user.created_at).format("DD/MM/YYYY"),
-            updated_at: moment(user.updated_at).format("DD/MM/YYYY"),
-            created_by: { id: user.created_by._id, label: user.created_by.username },
-            updated_by: { id: user.updated_by._id, label: user.updated_by.username }
+            dp: ""
         }
         res.status(200).json({ user: result, token: token })
     }
@@ -117,14 +111,7 @@ export class UserController {
                 mobile: user.mobile,
                 role: user.role,
                 customer: { id: user.customer._id, label: user.customer.name },
-                dp: "",
-                email_verified: user.email_verified,
-                mobile_verified: user.mobile_verified,
-                is_active: true,
-                created_at: moment(user.created_at).format("DD/MM/YYYY"),
-                updated_at: moment(user.updated_at).format("DD/MM/YYYY"),
-                created_by: { id: user.created_by._id, label: user.created_by.username },
-                updated_by: { id: user.updated_by._id, label: user.updated_by.username }
+                dp: ""
             }
         res.status(200).json({ user: result, token: req.cookies.accessToken })
     }

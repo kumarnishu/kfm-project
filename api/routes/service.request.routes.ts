@@ -15,6 +15,6 @@ router.route("/requests")
     .get(isAuthenticatedUser, controller.GetAllServiceRequests)
 router.route("/requests/:id")
     .get(isAuthenticatedUser, controller.GetAllServiceRequestsDetailed)
-    .post(isAuthenticatedUser, upload.array('files', 5), controller.HandleServiceRequest).put(isAuthenticatedUser, controller.CloseServiceRequest)
+    .post(isAuthenticatedUser, upload.array('files', 5), controller.CreateServiceRequestSolution).put(isAuthenticatedUser, controller.CreateServiceRequestPayment).patch(isAuthenticatedUser, controller.CloseServiceRequest)
 
 export default router;

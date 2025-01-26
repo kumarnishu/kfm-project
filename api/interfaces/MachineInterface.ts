@@ -5,7 +5,7 @@ export type IMachine = {
     name: string,
     model: string,
     photo: Asset,
-    is_active: boolean,
+    service_charge:number,
     created_at: Date,
     updated_at: Date,
     created_by: IUser,
