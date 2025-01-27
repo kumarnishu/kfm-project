@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MultiSelect from 'react-native-multiple-select';
-import { DropDownDto } from '../dto/DropDownDto';
+import { DropDownDto } from '../../dtos/DropDownDto';
 
 type Props = {
   selectedItems: string[],

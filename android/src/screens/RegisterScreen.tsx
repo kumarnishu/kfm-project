@@ -1,55 +1,53 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Button, TextInput, HelperText, Text, Snackbar, Divider } from 'react-native-paper';
+import React, { useContext } from 'react';
+import { ScrollView, StyleSheet, View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation } from 'react-query';
 import { AxiosResponse } from 'axios';
-import { ScrollView, StyleSheet, View } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { BackendError } from '../..';
 import { PublicStackParamList } from '../navigation/AppNavigator';
-import { CreateOrEditCustomerDto } from '../dto/CustomerDto';
+import { CreateOrEditCustomerDto } from '../dtos/CustomerDto';
 import { AlertContext } from '../contexts/AlertContext';
-import { Signup } from '../services/UserService';
+import { UserService } from '../services/UserService';
 
 type Props = StackScreenProps<PublicStackParamList, 'RegisterScreen'>;
 
-
 function RegisterScreen({ navigation }: Props) {
-  const { setAlert } = useContext(AlertContext)
+  const { setAlert } = useContext(AlertContext);
+
   const { mutate, isSuccess, isLoading } = useMutation<
     AxiosResponse<{ message: string }>,
     BackendError,
     { body: CreateOrEditCustomerDto }
-  >(Signup, {
-    onSuccess: (() => {
-      setAlert({ message: `${formik.values.name} ThankYou for joining With us !!`, color: 'success', type: 'snack' })
-      navigation.navigate('LoginScreen')
-    }),
-    onError: ((error) => {
-      error && setAlert({
-        message: error.response.data.message || "", color: 'error', type
-          : 'snack'
-      })
-    })
+  >(new UserService().Signup, {
+    onSuccess: () => {
+      Alert.alert('Success', `${formik.values.name}, thank you for joining us!`);
+      navigation.navigate('LoginScreen');
+    },
+    onError: (error) => {
+      Alert.alert('Error', error.response?.data?.message || 'An unknown error occurred.');
+    },
   });
-
 
   const formik = useFormik({
     initialValues: {
-      name: "",
-      username: "",
-      email: "",
-      mobile: "",
-      address: "",
-
+      name: '',
+      username: '',
+      email: '',
+      mobile: '',
+      address: '',
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Required').min(2).max(100),
       username: Yup.string().required('Required').min(2).max(100),
       email: Yup.string().required('Required').email('Invalid email'),
-      address: Yup.string().required('Required Address').min(4).max(300),
-      mobile: Yup.string().required('mobile is required').min(10, 'mobile must be 10 digits').max(10, 'mobile must be 10 digits').matches(/^[0-9]+$/, 'mobile must be a number'),
+      address: Yup.string().required('Required').min(4).max(300),
+      mobile: Yup.string()
+        .required('Mobile is required')
+        .min(10, 'Mobile must be 10 digits')
+        .max(10, 'Mobile must be 10 digits')
+        .matches(/^[0-9]+$/, 'Mobile must be a number'),
     }),
     onSubmit: (values) => {
       mutate({ body: values });
@@ -57,107 +55,86 @@ function RegisterScreen({ navigation }: Props) {
   });
 
   return (
-    <>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.headerText}>Register Here</Text>
 
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.headerText}>Register Here</Text>
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Company Name</Text>
         <TextInput
-          label="Company Name"
+          style={styles.input}
           placeholder="e.g., KFM INDIA"
-          mode="flat"
           value={formik.values.name}
           onChangeText={formik.handleChange('name')}
           onBlur={formik.handleBlur('name')}
-          error={formik.touched.name && !!formik.errors.name}
-          style={styles.input}
-
         />
-        {formik.touched.name && formik.errors.name && (
-          <HelperText type="error">{formik.errors.name}</HelperText>
-        )}
+        {formik.touched.name && formik.errors.name && <Text style={styles.errorText}>{formik.errors.name}</Text>}
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>User Name</Text>
         <TextInput
-          label="User Name"
+          style={styles.input}
           placeholder="e.g., Rahul"
-          mode="flat"
           value={formik.values.username}
           onChangeText={formik.handleChange('username')}
           onBlur={formik.handleBlur('username')}
-          error={formik.touched.username && !!formik.errors.username}
-          style={styles.input}
-
         />
-        {formik.touched.username && formik.errors.username && (
-          <HelperText type="error">{formik.errors.username}</HelperText>
-        )}
+        {formik.touched.username && formik.errors.username && <Text style={styles.errorText}>{formik.errors.username}</Text>}
+      </View>
 
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Email Address</Text>
         <TextInput
-          label="Email Address"
+          style={styles.input}
           placeholder="e.g., john.doe@example.com"
-          mode="flat"
           value={formik.values.email}
           onChangeText={formik.handleChange('email')}
           onBlur={formik.handleBlur('email')}
-          error={formik.touched.email && !!formik.errors.email}
-          style={styles.input}
-
+          keyboardType="email-address"
         />
-        {formik.touched.email && formik.errors.email && (
-          <HelperText type="error">{formik.errors.email}</HelperText>
-        )}
+        {formik.touched.email && formik.errors.email && <Text style={styles.errorText}>{formik.errors.email}</Text>}
+      </View>
 
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Mobile Number</Text>
         <TextInput
-          label="Mobile Number"
-          mode="flat"
-          keyboardType="number-pad"
+          style={styles.input}
+          placeholder="e.g., 1234567890"
           value={formik.values.mobile}
           onChangeText={formik.handleChange('mobile')}
           onBlur={formik.handleBlur('mobile')}
-          error={formik.touched.mobile && !!formik.errors.mobile}
-          style={styles.input}
-          placeholder="e.g., 1234567890"
+          keyboardType="number-pad"
         />
-        {formik.touched.mobile && formik.errors.mobile && (
-          <HelperText type="error">{formik.errors.mobile}</HelperText>
-        )}
+        {formik.touched.mobile && formik.errors.mobile && <Text style={styles.errorText}>{formik.errors.mobile}</Text>}
+      </View>
 
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Company Address</Text>
         <TextInput
-          label="Company Address"
-          mode="flat"
-          placeholder='e.g., Bahadurgarh haryana'
-          multiline
-          numberOfLines={4}
+          style={[styles.input, styles.textArea]}
+          placeholder="e.g., Bahadurgarh, Haryana"
           value={formik.values.address}
           onChangeText={formik.handleChange('address')}
           onBlur={formik.handleBlur('address')}
-          error={formik.touched.address && !!formik.errors.address}
-          style={[styles.input, styles.textArea]}
+          multiline
         />
-        {formik.touched.address && formik.errors.address && (
-          <HelperText type="error">{formik.errors.address}</HelperText>
-        )}
+        {formik.touched.address && formik.errors.address && <Text style={styles.errorText}>{formik.errors.address}</Text>}
+      </View>
 
-        <Button
-          mode="contained"
-          buttonColor="red"
-          style={styles.button}
-          onPress={() => {
-            formik.isValid && formik.handleSubmit()
-          }}
-          loading={isLoading}
-          disabled={isLoading}
-        >
-          {!formik.isValid ? 'Close' : 'Register'}
-        </Button>
-      </ScrollView>
-    </>
+      <TouchableOpacity
+        style={[styles.button, (!formik.isValid || isLoading) && styles.disabledButton]}
+        onPress={() => formik.isValid && formik.handleSubmit()}
+        disabled={!formik.isValid || isLoading}
+      >
+        <Text style={styles.buttonText}>{!formik.isValid ? 'Close' : isLoading ? 'Registering...' : 'Register'}</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    flexGrow: 1,
     padding: 20,
     backgroundColor: '#f9f9f9',
   },
@@ -168,27 +145,44 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: '#333',
   },
+  inputGroup: {
+    marginBottom: 15,
+  },
+  label: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 5,
+  },
   input: {
-    marginBottom: 10,
-    padding: 5,
-    backgroundColor: 'white'
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 10,
+    backgroundColor: '#fff',
   },
   textArea: {
-    height: 120,
+    height: 100,
   },
-  divider: {
-    marginVertical: 20,
-    backgroundColor: '#ddd',
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 5,
   },
   button: {
-    paddingVertical: 10,
+    backgroundColor: 'blue',
+    paddingVertical: 15,
     borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 20,
   },
-  snackbar: {
-    backgroundColor: '#323232',
+  disabledButton: {
+    backgroundColor: '#aaa',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
-
-
 
 export default RegisterScreen;

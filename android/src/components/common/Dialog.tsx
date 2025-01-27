@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, ScrollView, StyleSheet, Text } from 'react-native';
-import { useTheme } from 'react-native-paper';
 
 type Props = {
   visible: boolean,
@@ -10,7 +9,6 @@ type Props = {
 }
 const Dialog = ({ visible, handleClose, fullScreen, children }: Props) => {
   const [isFullScreen, setIsFullScreen] = useState(fullScreen)
-  const theme = useTheme()
   useEffect(() => {
     setIsFullScreen(fullScreen)
   }, [fullScreen])
@@ -20,7 +18,7 @@ const Dialog = ({ visible, handleClose, fullScreen, children }: Props) => {
       transparent={isFullScreen ? false : true}
       visible={visible}
       onRequestClose={handleClose}>
-      <ScrollView  contentContainerStyle={[isFullScreen ? styles.fullScreen : styles.default, { backgroundColor: theme.dark ? '#1A1A1A' : 'white' }]}>
+      <ScrollView  contentContainerStyle={[isFullScreen ? styles.fullScreen : styles.default, { backgroundColor: 'white' }]}>
         {children}
       </ScrollView>
     </Modal >

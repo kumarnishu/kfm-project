@@ -5,17 +5,6 @@ import { AlertProvider } from './contexts/AlertContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { MD3LightTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
-
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'tomato',
-    secondary: 'yellow',
-  },
-};
-
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -33,11 +22,9 @@ const App: React.FC = () => {
     <QueryClientProvider client={queryClient}>
       <UserProvider>
         <SafeAreaProvider>
-          <PaperProvider theme={theme}>
-            <AlertProvider>
-              <AppNavigator />
-            </AlertProvider>
-          </PaperProvider>
+          <AlertProvider>
+            <AppNavigator />
+          </AlertProvider>
         </SafeAreaProvider>
       </UserProvider>
     </QueryClientProvider>

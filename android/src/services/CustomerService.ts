@@ -1,33 +1,35 @@
-import { CreateOrEditCustomerDto } from "../dto/CustomerDto";
-import { CreateOrEditUserDto } from "../dto/UserDto";
+import { CreateOrEditCustomerDto } from "../dtos/CustomerDto";
+import { CreateOrEditUserDto } from "../dtos/UserDto";
 import { apiClient } from "./utils/axiosIterceptor";
 
-export const CreateOrEditCustomer = async ({ id, body }: { id?: string, body: CreateOrEditCustomerDto }) => {
-  if (id)
-    return await apiClient.put(`customers/${id}`, body)
-  return await apiClient.post("customers", body)
-};
+export class CustomerService {
+  public async CreateOrEditCustomer({ id, body }: { id?: string, body: CreateOrEditCustomerDto }) {
+    if (id)
+      return await apiClient.put(`customers/${id}`, body)
+    return await apiClient.post("customers", body)
+  };
 
-export const GetAllCustomersStaffForAdmin = async ({ id }: { id: string }) => {
-  return await apiClient.get(`customers/${id}`)
-}
-export const GetAllCustomers = async () => {
-  return await apiClient.get(`customers`)
-}
+  public async GetAllCustomersStaffForAdmin({ id }: { id: string }) {
+    return await apiClient.get(`customers/${id}`)
+  }
+  public async GetAllCustomers() {
+    return await apiClient.get(`customers`)
+  }
 
-export const GetAllCustomersForDropDown = async () => {
-  return await apiClient.get(`customers/dropdown`)
-}
+  public async GetAllCustomersForDropDown() {
+    return await apiClient.get(`customers/dropdown`)
+  }
 
-export const GetAllStaffs = async () => {
-  return await apiClient.get(`staff`)
-}
-export const CreateOrEditStaff = async ({ id, body }: { id?: string, body: CreateOrEditUserDto }) => {
-  if (id)
-    return await apiClient.put(`staff/${id}`, body)
-  return await apiClient.post("staff", body)
-};
+  public async GetAllStaffs() {
+    return await apiClient.get(`staff`)
+  }
+  public async CreateOrEditStaff({ id, body }: { id?: string, body: CreateOrEditUserDto }) {
+    if (id)
+      return await apiClient.put(`staff/${id}`, body)
+    return await apiClient.post("staff", body)
+  };
 
-export const GetAllStaffsForDropDown = async () => {
-  return await apiClient.get(`staff/dropdown`)
+  public async GetAllStaffsForDropDown() {
+    return await apiClient.get(`staff/dropdown`)
+  }
 }

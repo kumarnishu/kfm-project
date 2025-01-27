@@ -1,6 +1,7 @@
 import { GetCustomerDto } from "./CustomerDto"
 import { DropDownDto } from "./DropDownDto"
 import { GetMachineDto } from "./MachineDto"
+import { GetRegisteredProductDto } from "./RegisteredProducDto"
 import { GetSparePartDto } from "./SparePartDto"
 import { GetUserDto } from "./UserDto"
 

@@ -195,4 +195,29 @@ export class UserController {
             message: `congrats ${user.email} verification successful`
         });
     }
+    public async Login(req: Request, res: Response, next: NextFunction) {
+        let result: GetUserDto | null = null;
+        const { mobile } = req.body as { mobile: string}
+        let user = await User.findOne({ mobile: String(mobile).trim().toLowerCase() })
+        if (!user)
+            return res.status(404).json({ message: 'user not found' })
+        sendUserToken(res, user.getAccessToken())
+        user.last_login = new Date()
+        let token = user.getAccessToken()
+        //@ts-ignore
+        user.otp = undefined
+        //@ts-ignore
+        user.otp_valid_upto = undefined
+        await user.save()
+        result = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            mobile: user.mobile,
+            role: user.role,
+            customer: { id: user.customer._id, label: user.customer.name },
+            dp: ""
+        }
+        res.status(200).json({ user: result, token: token })
+    }
 }

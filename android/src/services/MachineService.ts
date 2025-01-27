@@ -1,5 +1,8 @@
 import { apiClient, multipartHeaders } from "./utils/axiosIterceptor";
 
+export class MachineService{
+    
+}
 export const CreateOrEditMachine = async ({ id, body }: { id?: string, body: FormData }) => {
     console.log(id, body)
     if (id)

@@ -1,5 +1,6 @@
+import React from 'react';
 import Video from "react-native-video"
-import Dialog from "./Dialog"
+import Dialog from "../Dialog"
 import { Dimensions, Image, StyleSheet, View } from "react-native"
 
 type Props = {

@@ -1,6 +1,9 @@
-import { EditSparePartsMachinesDto } from "../dto/SparePartDto";
+import { EditSparePartMachinesDto } from "../dtos/SparePartDto";
 import { apiClient, multipartHeaders } from "./utils/axiosIterceptor";
 
+export class SparePartService{
+    
+}
 export const GetAllSpareParts = async () => {
     return await apiClient.get(`parts`)
 }
@@ -16,7 +19,7 @@ export const GetSparePartsForDropdown = async () => {
 }
 
 export const EditSparePartsMachines = async ({ body }: {
-    body: EditSparePartsMachinesDto
+    body: EditSparePartMachinesDto
 }) => {
     return await apiClient.patch(`parts/machines/edit`, body)
 }

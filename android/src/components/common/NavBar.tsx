@@ -1,11 +1,11 @@
 import { View, Image, StyleSheet } from 'react-native';
 import React, { useCallback, useContext, useState } from 'react';
 import { Button, Divider, Menu, Text } from 'react-native-paper';
-import { UserContext } from '../contexts/UserContext';
-import { Logout } from '../services/UserService';
-import { toTitleCase } from '../utils/toTitleCase';
+import { UserContext } from '../../contexts/UserContext';
+import { toTitleCase } from '../../utils/toTitleCase';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { navigate } from '../navigation/AppNavigator';
+import { navigate } from '../../navigation/AppNavigator';
+import { UserService } from '../../services/UserService';
 
 const Navbar = () => {
     const { user, setUser } = useContext(UserContext);
@@ -16,7 +16,7 @@ const Navbar = () => {
 
     const handleLogout = useCallback(async () => {
         try {
-            await Logout();
+            await new UserService().Logout();
             setUser(undefined);
         } catch (err) {
             console.error("Logout failed:", err);

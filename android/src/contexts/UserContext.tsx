@@ -3,7 +3,7 @@ import { useQuery } from 'react-query'
 import { AxiosResponse } from 'axios'
 import { GetProfile } from "../services/UserService";
 import { BackendError } from "../..";
-import { GetUserDto } from "../dto/UserDto";
+import { GetUserDto } from "../dtos/UserDto";
 
 
 // usercontext

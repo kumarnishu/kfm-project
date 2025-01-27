@@ -1,3 +1,4 @@
+import React from 'react';
 import { Dimensions, StyleSheet, View } from "react-native";
 import Video from "react-native-video";
 

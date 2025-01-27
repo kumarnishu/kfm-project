@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, ScrollView, StyleSheet } from 'react-native';
+import { Modal, StyleSheet, View } from 'react-native';
 
 
 type Props = {
@@ -15,9 +15,9 @@ const Drawer = ({ visible, handleClose, position, children }: Props) => {
             transparent={visible ? visible : false}
             visible={visible}
             onRequestClose={handleClose}>
-            <ScrollView contentContainerStyle={position === "right" ? styles.rightDrawer : styles.leftDrawer}>
+            <View style={position === "right" ? styles.rightDrawer : styles.leftDrawer}>
                 {children}
-            </ScrollView>
+            </View>
         </Modal>
 
     );

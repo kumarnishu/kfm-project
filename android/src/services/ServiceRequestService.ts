@@ -1,6 +1,8 @@
-import { CloseServiceRequestDto } from "../dto/ServiceRequestDto";
 import { apiClient, multipartHeaders } from "./utils/axiosIterceptor";
 
+export class ServiceRequestService{
+    
+}
 export const CreateServiceRequest = async ({ body }: { body: FormData }) => {
     return await apiClient.post("requests", body, multipartHeaders);
 };
@@ -17,7 +19,3 @@ export const GetAllServiceRequests = async () => {
 }
 
 
-// block user
-export const CloseServiceRequest = async ({ id,body }: { id:string,body: CloseServiceRequestDto }) => {
-    return await apiClient.post(`requests/${id}`, body);
-}

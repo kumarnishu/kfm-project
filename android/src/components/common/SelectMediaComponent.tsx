@@ -5,7 +5,7 @@ import {
 } from 'react-native-paper';
 import { View, PermissionsAndroid, Platform, Image, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { AlertContext } from '../contexts/AlertContext';
+import { AlertContext } from '../../contexts/AlertContext';
 
 
 

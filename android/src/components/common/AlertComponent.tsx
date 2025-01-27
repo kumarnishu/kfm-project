@@ -1,10 +1,16 @@
-import React, { useContext } from 'react';
-import { View, Modal, StyleSheet } from 'react-native';
-import { AlertContext } from '../contexts/AlertContext';
-import { Button, Snackbar, Text } from 'react-native-paper';
+import React, { useContext, useEffect } from 'react';
+import { View, Modal, StyleSheet, Text, Button, Touchable, TouchableOpacity } from 'react-native';
+import { AlertContext } from '../../contexts/AlertContext';
 
 export default function AlertComponent() {
     const { alert, setAlert } = useContext(AlertContext)
+
+    useEffect(() => {
+        if (alert?.type == "snack")
+            setTimeout(() => {
+                setAlert(undefined)
+            }, 3000);
+    }, [alert])
 
     return (
         <Modal
@@ -16,26 +22,19 @@ export default function AlertComponent() {
             {alert && <>
                 {alert.type == 'snack' ?
                     <View style={styles.modalOverlay}>
-                        <Snackbar style={[{
-                            backgroundColor: alert.color == 'error' ? 'red' : 'green'
-                        }]}
-                            visible={!!alert}
-                            onDismiss={() => setAlert(undefined)}
-                            action={{
-                                label: 'Close',
-                                onPress: () => setAlert(undefined),
-                            }}
-                            duration={3000}
-                        >
-                            {alert.message}
-                        </Snackbar>
+                        <View style={[styles.snackAlertBox, { backgroundColor: alert.color == "error" ? 'rgba(200,0,0,0.8)' : 'rgba(0,0,0,0.8)', }]}>
+                            <Text style={styles.alertMessage}>{alert.message}</Text>
+                        </View>
                     </View> :
                     <>
                         <View style={styles.modalOverlay}>
                             <View style={[alert.color == 'error' ? styles.errorAlertBox : styles.successAlertBox, { borderRadius: 10 }]}>
                                 <Text style={styles.alertTitle}>Alert</Text>
                                 <Text style={styles.alertMessage}>{alert.message}</Text>
-                                <Button labelStyle={{ color: 'white' }} onPress={() => setAlert(undefined)} >OK</Button>
+
+                                <TouchableOpacity onPress={() => setAlert(undefined)}>
+                                    <Text style={{ textAlign: 'center', marginTop: 20, padding: 10, fontSize: 16, color: 'white' }}>OK</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     </>
@@ -51,6 +50,14 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         backgroundColor: 'rgba(0,0,0,0.5)',
+        alignItems: 'center',
+    },
+    snackAlertBox: {
+        width: '90%',
+        padding: 15,
+        borderRadius: 5,
+        position: 'absolute',
+        bottom: 20,
         alignItems: 'center',
     },
     successAlertBox: {
@@ -77,6 +84,5 @@ const styles = StyleSheet.create({
         fontSize: 16,
         letterSpacing: 1.1,
         color: 'white',
-        marginBottom: 20,
     },
 });
