@@ -13,6 +13,7 @@ const UserSchema = new mongoose.Schema<IUser, mongoose.Model<IUser, {}, IUserMet
     lowercase: true,
     required: true
   },
+  fcm_token: String,
   email: {
     type: String,
     trim: true,

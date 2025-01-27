@@ -16,6 +16,7 @@ import path from 'path';
 import { Storage } from '@google-cloud/storage';
 import morgan from 'morgan';
 import { Twilio } from 'twilio';
+import { activateFirebaseNotifications } from './services/sendNotification';
 
 
 const app = express()
@@ -57,7 +58,7 @@ if (ENV === "production") {
     }))
 }
 
-
+activateFirebaseNotifications()
 
 //cloud storage setupu config
 

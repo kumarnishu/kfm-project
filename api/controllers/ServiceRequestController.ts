@@ -4,10 +4,13 @@ import { CreateServiceRequestDto, CreateServiceRequestPaymentDto, CreateServiceR
 import { IServiceRequest } from "../interfaces/ServiceRequestInterface"
 import { RegisteredProduct } from "../models/RegisteredProductModel"
 import { Problem, ServiceRequest, Solution } from "../models/ServiceRequestModel"
-import { Asset } from "../interfaces/UserInterface"
-import { uploadFileToCloud } from "../utils/uploadFile.util"
+import { Asset, IUser } from "../interfaces/UserInterface"
+import { uploadFileToCloud } from "../services/uploadFIletoCloud"
 import { twillioClient } from "../app"
 import { User } from "../models/UserModel"
+import { GetNotificationDto } from "../dtos/NotificationDto"
+import { INotification } from "../interfaces/NotificationIterface"
+import { Notification } from "../models/NotificationModel"
 
 export class ServiceRequestController {
 
@@ -142,8 +145,27 @@ export class ServiceRequestController {
             to: `+91${phone}`
         })
     }
-
-
+    public async createFirebaseNotification(title: string, body: string, recepient: IUser) {
+        await new Notification({
+            title, body, status: 'pending', created_at: new Date(), recepient: recepient
+        }).save()
+    }
+    public async GetAllNotifications(req: Request, res: Response, next: NextFunction) {
+        let notifications: INotification[] = []
+        let result: GetNotificationDto[] = []
+        notifications = await Notification.find().sort('-created_at').limit(20)
+        result = notifications.map((item) => {
+            return {
+                _id: item._id,
+                title: item.title,
+                body: item.body,
+                status: item.status,
+                created_at: moment(item.created_at).format("DD-MM-YYYY"),
+                send_at: moment(item.created_at).calendar(),
+            }
+        })
+        return res.status(200).json(result)
+    }
     public async GetAllServiceRequests(req: Request, res: Response, next: NextFunction) {
         let requests: IServiceRequest[] = []
         let result: GetServiceRequestDto[] = []
@@ -264,4 +286,5 @@ export class ServiceRequestController {
         }
         return res.status(200).json(result)
     }
+
 }

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import moment from "moment"
-import { uploadFileToCloud } from "../utils/uploadFile.util"
-import { destroyFile } from "../utils/destroyFile.util"
+import { uploadFileToCloud } from "../services/uploadFIletoCloud"
+import { destroyFile } from "../services/destryFile"
 import { CreateOrEditMachineDto, GetMachineDto } from "../dtos/MachineDto";
 import { DropDownDto } from "../dtos/DropDownDto";
 import { IMachine } from "../interfaces/MachineInterface";

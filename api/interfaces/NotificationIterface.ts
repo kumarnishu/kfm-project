@@ -1,5 +1,11 @@
+import { IUser } from "./UserInterface"
+
 export type INotification = {
-    notification: string,
+    _id: string
+    title: string,
+    body: string,
     status: string,
+    recepient: IUser
     created_at: Date,
+    send_at:Date
 }

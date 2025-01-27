@@ -99,7 +99,12 @@ export class UserController {
         }
         res.status(200).json({ user: result, token: token })
     }
-
+    public async UpdateFcmToken(req: Request, res: Response, next: NextFunction) {
+        let id = req.params.id
+        let { token } = req.body as { token: string }
+        await User.findByIdAndUpdate(id, { fcm_token: token })
+        res.status(200).json({ message: "success" })
+    }
     public async GetProfile(req: Request, res: Response, next: NextFunction) {
         let result: GetUserDto | null = null;
         const user = await User.findById(req.user?._id).populate("created_by").populate("customer").populate("updated_by")

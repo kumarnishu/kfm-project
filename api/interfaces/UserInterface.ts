@@ -20,6 +20,7 @@ export type IUser = {
   otp: number,
   otp_valid_upto: Date,
   customer: ICustomer,
+  fcm_token:string
   role: string,//admin,engineer,customer_owner,customer_staff
   mobile_verified: boolean,
   is_active: boolean,
