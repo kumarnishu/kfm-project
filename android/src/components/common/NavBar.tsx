@@ -1,6 +1,5 @@
-import { View, Image, StyleSheet } from 'react-native';
+import { View, Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import React, { useCallback, useContext, useState } from 'react';
-import { Button, Divider, Menu, Text } from 'react-native-paper';
 import { UserContext } from '../../contexts/UserContext';
 import { toTitleCase } from '../../utils/toTitleCase';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -45,8 +44,8 @@ const Navbar = () => {
                         size={40}
                         color="white"
                         onPress={() => {
-                            navigate("NotificationScreen")
-                            closeMenu()
+                            navigate("NotificationScreen");
+                            closeMenu();
                         }}
                     />
                     <View style={styles.badge}>
@@ -57,31 +56,33 @@ const Navbar = () => {
                 </View>
 
                 {/* Menu Icon with Dropdown */}
-                <Menu
-                    visible={menuVisible}
-                    style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', width: 150 }}
-                    anchorPosition='bottom'
-                    onDismiss={closeMenu}
-                    anchor={
-                        <MaterialIcons
-                            name="menu"
-                            size={45}
-                            color="white"
-                            onPress={openMenu}
-                        />
-                    }
-                >
-                    <Button mode="contained" buttonColor='whitesmoke' >
-                        <Text style={{ color: 'grey' }} onPress={() => {
-                            navigate("HomeScreen")
-                            closeMenu()
-                        }}>Home</Text>
-                    </Button>
-                    <Divider style={{ marginVertical: 5 }} />
-                    <Button mode="text" >
-                        <Text style={{ color: 'red' }} onPress={handleLogout}>Exit</Text>
-                    </Button>
-                </Menu>
+                <MaterialIcons
+                    name="menu"
+                    size={45}
+                    color="white"
+                    onPress={openMenu}
+                />
+                
+                {menuVisible && (
+                    <View style={styles.menu}>
+                        <TouchableOpacity
+                            style={styles.menuItem}
+                            onPress={() => {
+                                navigate("HomeScreen");
+                                closeMenu();
+                            }}
+                        >
+                            <Text style={styles.menuText}>Home</Text>
+                        </TouchableOpacity>
+                        <View style={styles.divider} />
+                        <TouchableOpacity
+                            style={styles.menuItem}
+                            onPress={handleLogout}
+                        >
+                            <Text style={styles.logoutText}>Exit</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
             </View>
         </View>
     );
@@ -133,6 +134,31 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: 10,
         fontWeight: 'bold',
+    },
+    menu: {
+        position: 'absolute',
+        top: 60,
+        right: 0,
+        backgroundColor: 'white',
+        borderRadius: 5,
+        elevation: 5,
+        width: 150,
+        padding: 10,
+    },
+    menuItem: {
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+    },
+    menuText: {
+        color: 'grey',
+    },
+    logoutText: {
+        color: 'red',
+    },
+    divider: {
+        height: 1,
+        backgroundColor: 'lightgrey',
+        marginVertical: 5,
     },
 });
 

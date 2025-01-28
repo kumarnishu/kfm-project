@@ -63,20 +63,31 @@ const LoginScreen = ({ navigation }: Props) => {
     retrieveCredentials();
   }, []);
 
+  const handleMobileChange = (text) => {
+    if (text.length <= 10) {
+      formik.setFieldValue('mobile', text);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Image style={styles.logo} source={require('../assets/img/icon.png')} />
-      <TextInput
-        style={[
-          styles.input,
-          formik.touched.mobile && formik.errors.mobile && styles.inputError,
-        ]}
-        placeholder="Registered Mobile Number"
-        value={formik.values.mobile}
-        onChangeText={formik.handleChange('mobile')}
-        onBlur={formik.handleBlur('mobile')}
-        keyboardType="numeric"
-      />
+      <Text style={styles.labelText}>Mobile Number</Text>
+      <View style={styles.inputContainer}>
+        <Text style={styles.countryCode}>+91</Text>
+        <TextInput
+          style={[
+            styles.input,
+            formik.touched.mobile && formik.errors.mobile && styles.inputError,
+          ]}
+          placeholder="Registered Mobile Number"
+          value={formik.values.mobile}
+          onChangeText={handleMobileChange}
+          onBlur={formik.handleBlur('mobile')}
+          keyboardType="numeric"
+          maxLength={10} // Allow max 10 digits
+        />
+      </View>
       {formik.touched.mobile && formik.errors.mobile && (
         <Text style={styles.errorText}>{formik.errors.mobile}</Text>
       )}
@@ -112,14 +123,30 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     alignSelf: 'center',
   },
-  input: {
+  labelText: {
+    marginBottom: 10,
+    fontSize: 16,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
+    backgroundColor: '#fff',
+  },
+  countryCode: {
     padding: 12,
     fontSize: 16,
-    marginBottom: 10,
-    backgroundColor: '#fff',
+    color: '#888',
+    backgroundColor: '#f2f2f2',
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
+  },
+  input: {
+    flex: 1,
+    padding: 12,
+    fontSize: 16,
   },
   inputError: {
     borderColor: 'red',

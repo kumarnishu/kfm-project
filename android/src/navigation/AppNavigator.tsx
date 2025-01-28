@@ -6,14 +6,15 @@ import {
 import { UserContext } from '../contexts/UserContext';
 import NotificationScreen from '../screens/NotificationScreen';
 import { AlertContext } from '../contexts/AlertContext';
-import messaging from '@react-native-firebase/messaging';
 import { Alert } from 'react-native';
+// import PushNotification from 'react-native-push-notification';
 import VideoLoader from "../components/common/VideoLoader"
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import OtpVerifyScreen from '../screens/OtpVerifyScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import AlertComponent from "../components/common/AlertComponent"
+import Navbar from '../components/common/NavBar';
 export const navigationRef = createNavigationContainerRef();
 
 export const navigate = (name: string, params?: object) => {
@@ -52,9 +53,32 @@ const PublicNavigator = () => (
   </PublicStack.Navigator>
 );
 
+
+
 const AppNavigator = () => {
   const { user, isLoading } = useContext(UserContext);
   const { alert, setAlert } = useContext(AlertContext)
+
+
+
+  // useEffect(() => {
+  //   PushNotification.configure({
+  //     onRegister: function (token) {
+  //       console.log("TOKEN:", token);
+  //     },
+  //     onNotification: function (notification) {
+  //       console.log("NOTIFICATION:", notification);
+  //       notification.finish(PushNotification.FetchResult.NoData);
+  //     },
+  //     onAction: function (notification) {
+  //       console.log("ACTION:", notification);
+  //     },
+  //     onRegistrationError: function (err) {
+  //       console.error(err.message, err);
+  //     },
+  //     requestPermissions: true,
+  //   });
+  // }, [])
 
   if (isLoading)
     return (
@@ -63,72 +87,13 @@ const AppNavigator = () => {
       </NavigationContainer>
     )
 
-
-
-  // async function requestUserPermission() {
-  //   const authStatus = await messaging().requestPermission();
-  //   const enabled = 
-  //     authStatus === messaging.AuthorizationStatus.AUTHORIZED || 
-  //     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-  //   if (enabled) {
-  //     console.log('Authorization status:', authStatus);
-  //   } else {
-  //     Alert.alert('Permission denied');
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   requestUserPermission();
-  // }, []);
-
-  // useEffect(() => {
-  //   // Handle notification when app is in the foreground
-  //   const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
-  //     Alert.alert(
-  //       remoteMessage.notification?.title,
-  //       remoteMessage.notification?.body,
-  //       [
-  //         {
-  //           text: 'OK',
-  //           onPress: () => navigateToNotification(remoteMessage),
-  //         }
-  //       ]
-  //     );
-  //   });
-
-  //   // Handle when the app is opened from background state
-  //   messaging().onNotificationOpenedApp(remoteMessage => {
-  //     navigateToNotification(remoteMessage);
-  //   });
-
-  //   // Handle when app is opened from quit state
-  //   messaging().getInitialNotification().then(remoteMessage => {
-  //     if (remoteMessage) {
-  //       navigateToNotification(remoteMessage);
-  //     }
-  //   });
-
-  //   return () => unsubscribeOnMessage();
-  // }, []);
-
-  // const navigateToNotification = (remoteMessage) => {
-  //   console.log('Navigating to NotificationScreen with data:', remoteMessage.data);
-  //   navigationRef.current?.navigate('Notification', { data: remoteMessage.data });
-  // };
-
-  // const getToken = async () => {
-  //   const token = await messaging().getToken();
-  //   console.log('FCM Token:', token);
-  // };
-
-  // useEffect(() => {
-  //   getToken();
-  // }, []);
   return (
     <NavigationContainer ref={navigationRef}>
       {user ?
-        <AuthenticatedNavigator />
+        <>
+          <Navbar />
+          <AuthenticatedNavigator />
+        </>
         : <PublicNavigator />}
       {alert && <AlertComponent />}
     </NavigationContainer>
