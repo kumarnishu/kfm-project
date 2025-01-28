@@ -125,6 +125,7 @@ UserSchema.method(
 )
 UserSchema.method(
   "getAccessToken", function () {
+    //@ts-ignore
     return jwt.sign({ id: this._id }, process.env.JWT_ACCESS_USER_SECRET || "kkskhsdhk", {
       expiresIn: process.env.JWT_ACCESS_EXPIRE,
     });

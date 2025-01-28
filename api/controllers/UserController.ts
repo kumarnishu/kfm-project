@@ -6,8 +6,7 @@ import { Customer } from '../models/CustomerModel';
 import { User } from '../models/UserModel';
 import { CreateOrEditCustomerDto } from '../dtos/CustomerDto';
 import { GetUserDto, LoginDto, SendOrVerifyEmailDto } from '../dtos/UserDto';
-
-
+import { createFirebaseNotification } from '../services/createNotification';
 
 export class UserController {
 
@@ -218,6 +217,7 @@ export class UserController {
             customer: { id: user.customer._id, label: user.customer.name },
             dp: ""
         }
+        await createFirebaseNotification("New Service Request", "new service request has been generated", user)
         res.status(200).json({ user: result, token: token })
     }
 }

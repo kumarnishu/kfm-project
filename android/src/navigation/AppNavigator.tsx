@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
+import { PermissionsAndroid } from 'react-native';
 import {
   NavigationContainer, createNavigationContainerRef,
 } from '@react-navigation/native';
@@ -16,6 +17,8 @@ import RegisterScreen from '../screens/RegisterScreen';
 import AlertComponent from "../components/common/AlertComponent"
 import Navbar from '../components/common/NavBar';
 export const navigationRef = createNavigationContainerRef();
+import messaging from '@react-native-firebase/messaging';
+
 
 export const navigate = (name: string, params?: object) => {
   if (navigationRef.isReady()) {
@@ -59,33 +62,39 @@ const AppNavigator = () => {
   const { user, isLoading } = useContext(UserContext);
   const { alert, setAlert } = useContext(AlertContext)
 
+  useEffect(() => {
+    async function requestUserPermission() {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    
+      if (enabled) {
+        console.log('Authorization status:', authStatus);
+        getToken()
+      }
+    }
+    requestUserPermission()
+  }, [])
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+    return unsubscribe;
+  }, []);
 
 
-  // useEffect(() => {
-  //   PushNotification.configure({
-  //     onRegister: function (token) {
-  //       console.log("TOKEN:", token);
-  //     },
-  //     onNotification: function (notification) {
-  //       console.log("NOTIFICATION:", notification);
-  //       notification.finish(PushNotification.FetchResult.NoData);
-  //     },
-  //     onAction: function (notification) {
-  //       console.log("ACTION:", notification);
-  //     },
-  //     onRegistrationError: function (err) {
-  //       console.error(err.message, err);
-  //     },
-  //     requestPermissions: true,
-  //   });
-  // }, [])
-
-  if (isLoading)
-    return (
-      <NavigationContainer>
-        <VideoLoader videoUrl={require('../assets/brand-video.mp4')} />
-      </NavigationContainer>
-    )
+  const getToken = async () => {
+    let token = await messaging().getToken()
+    console.log("token", token)
+  }
+  // if (isLoading)
+  //   return (
+  //     <NavigationContainer>
+  //       <VideoLoader videoUrl={require('../assets/brand-video.mp4')} />
+  //     </NavigationContainer>
+  //   )
 
   return (
     <NavigationContainer ref={navigationRef}>

@@ -1,10 +1,11 @@
 import * as admin from 'firebase-admin';
-import * as serviceAccount from "../firebase.json";
-
+// Use require to load the service account JSON file
+import serviceAccount from "../firebase.json";
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+  //@ts-ignore
+  credential: admin.credential.cert(serviceAccount),
 });
 
 export default admin;

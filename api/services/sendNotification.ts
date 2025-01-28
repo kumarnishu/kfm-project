@@ -4,9 +4,10 @@ import { Notification } from "../models/NotificationModel";
 import { INotification } from "../interfaces/NotificationIterface";
 
 export async function activateFirebaseNotifications() {
-  // daily trigger
-  new CronJob("0 0 1/1 * *", async () => {
-    let notifications = await Notification.find({ status: 'pending' }).populate('recepient').sort('-created_at')
+  // daily 
+  console.log("notifcation started to send")
+  new CronJob("1/1 * * * *", async () => {
+    let notifications = await Notification.find({ status:{$ne:'sent'} }).populate('recepient').sort('-created_at')
     for (let i = 0; i < notifications.length; i++) {
       if (notifications[i].recepient && notifications[i].recepient.fcm_token)
         await sendNotification(notifications[i])

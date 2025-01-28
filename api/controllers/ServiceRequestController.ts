@@ -145,11 +145,7 @@ export class ServiceRequestController {
             to: `+91${phone}`
         })
     }
-    public async createFirebaseNotification(title: string, body: string, recepient: IUser) {
-        await new Notification({
-            title, body, status: 'pending', created_at: new Date(), recepient: recepient
-        }).save()
-    }
+   
     public async GetAllNotifications(req: Request, res: Response, next: NextFunction) {
         let notifications: INotification[] = []
         let result: GetNotificationDto[] = []
