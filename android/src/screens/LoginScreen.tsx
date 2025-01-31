@@ -49,7 +49,6 @@ const LoginScreen = ({ navigation }: Props) => {
         .matches(/^[0-9]+$/, 'Mobile must be a number'),
     }),
     onSubmit: async (values) => {
-      const fcmtoken = await AsyncStorage.getItem('fcm_token');
       mutate(values);
     },
   });

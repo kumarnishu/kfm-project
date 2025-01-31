@@ -203,8 +203,18 @@ export class CustomerController {
     }
     public async GetSelectedCustomerStaffForAdmin(req: Request, res: Response, next: NextFunction) {
         let id = req.params.id
+        let search = req.query.search
         let result: GetUserDto[] = []
-        let users: IUser[] = await User.find({ customer: id }).populate("created_by").populate("updated_by").populate("customer").sort('-last_login')
+        let users: IUser[] = []
+        if (search)
+            users = await User.find({
+                customer: id, $or: [
+                    { mobile: { $regex: search, $options: 'i' } },
+                    { username: { $regex: search, $options: 'i' } }
+                ]
+            }).populate("created_by").populate("updated_by").populate("customer").sort('-last_login').limit(10)
+        else
+            users = await User.find({ customer: id }).populate("created_by").populate("updated_by").populate("customer").sort('-last_login').limit(10)
 
         result = users.map((u) => {
             return {

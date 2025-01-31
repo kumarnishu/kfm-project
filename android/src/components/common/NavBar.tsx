@@ -1,20 +1,14 @@
-import { View, Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import React, { useCallback, useContext, useState } from 'react';
+import { View, Image, StyleSheet, Text } from 'react-native';
+import React, { useCallback, useContext } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import { toTitleCase } from '../../utils/toTitleCase';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { navigate } from '../../navigation/AppNavigator';
 import { UserService } from '../../services/UserService';
-import Drawer from './Drawer';
-import DrawerItems from './DrawerItems';
 
 const Navbar = () => {
     const { user, setUser } = useContext(UserContext);
-    const [menuVisible, setMenuVisible] = useState(false);
-
-    const openMenu = () => setMenuVisible(true);
-    const closeMenu = () => setMenuVisible(false);
-
     const handleLogout = useCallback(async () => {
         try {
             await new UserService().Logout();
@@ -43,11 +37,10 @@ const Navbar = () => {
                 <View style={styles.notificationContainer}>
                     <MaterialIcons
                         name="notifications"
-                        size={40}
+                        size={35}
                         color="white"
                         onPress={() => {
-                            navigate("NotificationScreen");
-                            closeMenu();
+                            navigate('NotificationScreen')
                         }}
                     />
                     <View style={styles.badge}>
@@ -58,16 +51,12 @@ const Navbar = () => {
                 </View>
 
                 {/* Menu Icon with Dropdown */}
-                <MaterialIcons
-                    name="menu"
-                    size={45}
-                    color="white"
-                    onPress={openMenu}
+                <AntDesign
+                    name="poweroff"
+                    size={30}
+                    color="lightgrey"
+                    onPress={() => handleLogout()}
                 />
-
-                <Drawer visible={menuVisible} handleClose={() => setMenuVisible(!menuVisible)} position='right'>
-                    <DrawerItems visible={menuVisible} setVisible={() => setMenuVisible(!menuVisible)} />
-                </Drawer>
             </View>
         </View>
     );
@@ -96,18 +85,19 @@ const styles = StyleSheet.create({
     },
     logoText: {
         color: 'white',
-        fontSize: 20,
+        fontSize: 24,
+        paddingLeft:10,
         fontWeight: 'bold',
     },
     notificationContainer: {
         position: 'relative',
-        marginRight: 15,
+        marginRight: 25,
     },
     badge: {
         position: 'absolute',
         top: -5,
         right: -5,
-        backgroundColor: 'yellow',
+        backgroundColor: 'white',
         borderRadius: 10,
         minWidth: 15,
         minHeight: 15,

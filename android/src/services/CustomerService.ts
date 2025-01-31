@@ -9,7 +9,9 @@ export class CustomerService {
     return await apiClient.post("customers", body)
   };
 
-  public async GetAllCustomersStaffForAdmin({ id }: { id: string }) {
+  public async GetAllCustomersStaffForAdmin({ id, search }: { id: string, search?: string }) {
+    if (search)
+      return await apiClient.get(`customers/${id}/?search=${search}`)
     return await apiClient.get(`customers/${id}`)
   }
   public async GetAllCustomers() {

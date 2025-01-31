@@ -64,7 +64,7 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
   const renderCard = ({ item }: { item: GetCustomerDto }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate('CustomerDetailsScreen', { id: item._id })}
+      onPress={() => navigation.navigate('CustomerDetailsScreen', { id: item._id, data: { company: item.name, address: item.address, email: item.email, mobile: item.mobile } })}
     >
       <Text style={styles.cardTitle}>{toTitleCase(item.name || 'Customer')}</Text>
       <Text style={styles.cardText}>Location: {item.address || 'Not available'}</Text>
@@ -86,7 +86,7 @@ const CustomersScreen: React.FC<Props> = ({ navigation }) => {
     return (
       <View style={styles.loaderContainer}>
         <Text>Failed to load customers. Please try again later.</Text>
-        <TouchableOpacity style={styles.retryButton} onPress={()=>refetch()}>
+        <TouchableOpacity style={styles.retryButton} onPress={() => refetch()}>
           <Text style={styles.retryButtonText}>Retry</Text>
         </TouchableOpacity>
       </View>

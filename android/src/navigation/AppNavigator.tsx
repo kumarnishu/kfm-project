@@ -43,7 +43,7 @@ export const replaceScreen = (screenName: string, params?: object) => {
 export type AuthenticatedStackParamList = {
   HomeScreen: undefined;
   NotificationScreen: undefined;
-  CustomerDetailsScreen: { id: string }; // Example parameter
+  CustomerDetailsScreen: { id: string, data: { company: string, address: string, email: string, mobile: string } }; // Example parameter
   CustomersScreen: undefined
   MachineDetailsScreen: { id: string }; // Example parameter
   MachinesScreen: undefined
