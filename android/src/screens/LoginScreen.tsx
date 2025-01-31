@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Image, View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useMutation } from 'react-query';
 import { AxiosResponse } from 'axios';
@@ -18,11 +18,10 @@ type Props = StackScreenProps<PublicStackParamList, 'LoginScreen'>;
 const LoginScreen = ({ navigation }: Props) => {
   const { setUser } = useContext(UserContext);
   const { setAlert } = useContext(AlertContext);
-
   const { mutate, isLoading } = useMutation<
     AxiosResponse<{ user: GetUserDto; token: string }>,
     BackendError,
-    { mobile: string }
+    { mobile: string, fcm_token?: string }
   >(new UserService().DirectLogin, {
     onSuccess: (data) => {
       AsyncStorage.setItem('uname', formik.values.mobile);
@@ -40,6 +39,7 @@ const LoginScreen = ({ navigation }: Props) => {
   const formik = useFormik({
     initialValues: {
       mobile: '',
+      fcm_token: ''
     },
     validationSchema: Yup.object({
       mobile: Yup.string()
@@ -49,6 +49,7 @@ const LoginScreen = ({ navigation }: Props) => {
         .matches(/^[0-9]+$/, 'Mobile must be a number'),
     }),
     onSubmit: async (values) => {
+      const fcmtoken = await AsyncStorage.getItem('fcm_token');
       mutate(values);
     },
   });
@@ -56,9 +57,12 @@ const LoginScreen = ({ navigation }: Props) => {
   useEffect(() => {
     const retrieveCredentials = async () => {
       const savedMobile = await AsyncStorage.getItem('uname');
+      const fcmToken = await AsyncStorage.getItem('fcm_token');
       if (savedMobile) {
-        formik.setValues({ mobile: savedMobile });
+        formik.values.mobile=savedMobile
       }
+      if(fcmToken)
+        formik.values.fcm_token=fcmToken
     };
     retrieveCredentials();
   }, []);

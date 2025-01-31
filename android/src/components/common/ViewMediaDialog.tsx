@@ -1,8 +1,7 @@
 import React from 'react';
 import Video from "react-native-video"
-import Dialog from "../Dialog"
 import { Dimensions, Image, StyleSheet, View } from "react-native"
-
+import Dialog from "./Dialog"
 type Props = {
     dialog: string | undefined,
     setDialog: React.Dispatch<React.SetStateAction<string | undefined>>

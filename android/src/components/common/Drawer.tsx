@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, StyleSheet, View } from 'react-native';
-
+import { BlurView } from '@react-native-community/blur';
 
 type Props = {
     visible: boolean,
@@ -8,27 +8,41 @@ type Props = {
     position: "right" | "left",
     children?: React.ReactNode;
 }
+
 const Drawer = ({ visible, handleClose, position, children }: Props) => {
     return (
         <Modal
-            animationType="fade"
+            animationType="none"
             transparent={visible ? visible : false}
             visible={visible}
             onRequestClose={handleClose}>
-            <View style={position === "right" ? styles.rightDrawer : styles.leftDrawer}>
-                {children}
-            </View>
+            {/* BlurView for background blur effect */}
+            <BlurView
+                style={styles.modalBackground}
+                blurType="light"
+                blurAmount={10}
+            >
+                <View style={position === "right" ? styles.rightDrawer : styles.leftDrawer}>
+                    {children}
+                </View>
+            </BlurView>
         </Modal>
-
     );
 };
 
 const styles = StyleSheet.create({
-    rightDrawer: {
-        marginLeft: 100,
+    modalBackground: {
         flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark overlay to give the blur effect prominence
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    rightDrawer: {
+        backgroundColor: 'white',
+        flex: 1,
+        marginLeft:'30%',
+        width:'80%',
         flexDirection: 'column',
-        justifyContent: 'space-between',
         gap: 10,
         alignItems: 'center',
         shadowColor: '#000',
@@ -42,6 +56,7 @@ const styles = StyleSheet.create({
     },
     leftDrawer: {
         marginRight: 100,
+        backgroundColor: 'white',
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-between',

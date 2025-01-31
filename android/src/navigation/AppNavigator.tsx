@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { PermissionsAndroid } from 'react-native';
 import {
+  CommonActions,
   NavigationContainer, createNavigationContainerRef,
 } from '@react-navigation/native';
 import { UserContext } from '../contexts/UserContext';
@@ -18,6 +18,7 @@ import AlertComponent from "../components/common/AlertComponent"
 import Navbar from '../components/common/NavBar';
 export const navigationRef = createNavigationContainerRef();
 import messaging from '@react-native-firebase/messaging';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export const navigate = (name: string, params?: object) => {
@@ -27,9 +28,34 @@ export const navigate = (name: string, params?: object) => {
   }
 };
 
+export const replaceScreen = (screenName: string, params?: object) => {
+  if (navigationRef.isReady()) {
+    navigationRef.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: screenName, params }],
+      })
+    );
+  }
+};
+
 export type AuthenticatedStackParamList = {
   HomeScreen: undefined;
   NotificationScreen: undefined;
+  CustomerDetailsScreen: { id: string }; // Example parameter
+  CustomersScreen: undefined
+  MachineDetailsScreen: { id: string }; // Example parameter
+  MachinesScreen: undefined
+  SpareDetailsScreen: { id: string }; // Example parameter
+  SparesScreen: undefined
+  EngineerDetailsScreen: { id: string }; // Example parameter
+  EngineersScreen: undefined
+  StaffDetailsScreen: { id: string }; // Example parameter
+  StaffsScreen: undefined
+  ProductDetailsScreen: { id: string }; // Example parameter
+  ProductsScreen: undefined
+  ServiceRequestDetailsScreen: { id: string }; // Example parameter
+  ServiceRequestsScreen: undefined
 };
 
 export type PublicStackParamList = {
@@ -43,8 +69,22 @@ const PublicStack = createStackNavigator<PublicStackParamList>();
 
 const AuthenticatedNavigator = () => (
   <AuthenticatedStack.Navigator initialRouteName="HomeScreen" screenOptions={{ animation: 'fade', headerShown: false }}>
-    <AuthenticatedStack.Screen name="HomeScreen" component={HomeScreen} />
+   <AuthenticatedStack.Screen name="HomeScreen" component={HomeScreen} />
     <AuthenticatedStack.Screen name="NotificationScreen" component={NotificationScreen} />
+    <AuthenticatedStack.Screen name="CustomersScreen" component={CustomersScreen} />
+    <AuthenticatedStack.Screen name="CustomerDetailsScreen" component={CustomerDetailsScreen} />
+    <AuthenticatedStack.Screen name="MachinesScreen" component={MachinesScreen} />
+    <AuthenticatedStack.Screen name="MachineDetailsScreen" component={MachineDetailsScreen} />
+    <AuthenticatedStack.Screen name="SparesScreen" component={SparesScreen} />
+    <AuthenticatedStack.Screen name="SpareDetailsScreen" component={SpareDetailsScreen} />
+    <AuthenticatedStack.Screen name="ProductsScreen" component={ProductsScreen} />
+    <AuthenticatedStack.Screen name="ProductDetailsScreen" component={ProductDetailsScreen} />
+    <AuthenticatedStack.Screen name="EngineersScreen" component={EngineersScreen} />
+    <AuthenticatedStack.Screen name="EngineerDetailsScreen" component={EngineerDetailsScreen} />
+    <AuthenticatedStack.Screen name="StaffsScreen" component={StaffsScreen} />
+    <AuthenticatedStack.Screen name="StaffDetailsScreen" component={StaffDetailsScreen} />
+    <AuthenticatedStack.Screen name="ServiceRequestsScreen" component={ServiceRequestsScreen} />
+    <AuthenticatedStack.Screen name="ServiceRequestDetailsScreen" component={ServiceRequestDetailsScreen} />
   </AuthenticatedStack.Navigator>
 );
 
@@ -68,7 +108,7 @@ const AppNavigator = () => {
       const enabled =
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-    
+
       if (enabled) {
         console.log('Authorization status:', authStatus);
         getToken()
@@ -87,23 +127,25 @@ const AppNavigator = () => {
 
   const getToken = async () => {
     let token = await messaging().getToken()
-    console.log("token", token)
+    AsyncStorage.setItem('fcm_token', token);
   }
-  // if (isLoading)
-  //   return (
-  //     <NavigationContainer>
-  //       <VideoLoader videoUrl={require('../assets/brand-video.mp4')} />
-  //     </NavigationContainer>
-  //   )
-
+  if (isLoading)
+    return (
+      <NavigationContainer>
+        <VideoLoader videoUrl={require('../assets/brand-video.mp4')} />
+      </NavigationContainer>
+    )
+  if (!user)
+    return (
+      <NavigationContainer ref={navigationRef}>
+        <PublicNavigator />
+        {alert && <AlertComponent />}
+      </NavigationContainer>
+    )
   return (
     <NavigationContainer ref={navigationRef}>
-      {user ?
-        <>
           <Navbar />
           <AuthenticatedNavigator />
-        </>
-        : <PublicNavigator />}
       {alert && <AlertComponent />}
     </NavigationContainer>
   );

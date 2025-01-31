@@ -24,7 +24,8 @@ export class UserService {
 
   public async DirectLogin(
     body: {
-      mobile: string
+      mobile: string,
+      fcm_token?:string
     }
   ) {
     return await apiClient.post("direct-login", body);

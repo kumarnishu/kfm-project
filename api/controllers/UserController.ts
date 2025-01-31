@@ -196,7 +196,7 @@ export class UserController {
     }
     public async Login(req: Request, res: Response, next: NextFunction) {
         let result: GetUserDto | null = null;
-        const { mobile } = req.body as { mobile: string}
+        const { mobile,fcm_token } = req.body as { mobile: string,fcm_token:string}
         let user = await User.findOne({ mobile: String(mobile).trim().toLowerCase() })
         if (!user)
             return res.status(404).json({ message: 'user not found' })
@@ -207,6 +207,7 @@ export class UserController {
         user.otp = undefined
         //@ts-ignore
         user.otp_valid_upto = undefined
+        user.fcm_token=fcm_token
         await user.save()
         result = {
             _id: user._id,

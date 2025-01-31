@@ -1,12 +1,8 @@
 import React, { useContext, useState } from 'react';
-import {
-  Text,
-  IconButton,
-} from 'react-native-paper';
-import { View, PermissionsAndroid, Platform, Image, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, PermissionsAndroid, Platform, Image, TouchableOpacity, StyleSheet, FlatList, Text } from 'react-native';
 import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { AlertContext } from '../../contexts/AlertContext';
-
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 
 async function requestCameraPermission() {
@@ -90,7 +86,11 @@ function SelectMediaComponent({
         </View>
       )}
       <TouchableOpacity style={styles.removeButton} onPress={() => removeFile(item.id)}>
-        <IconButton icon="close" size={20} />
+        <MaterialIcons
+          name="cancel"
+          size={20}
+          color="red"
+        />
       </TouchableOpacity>
     </View>
   );
@@ -107,10 +107,10 @@ function SelectMediaComponent({
         {/* File Previews */}
 
         <View style={{ alignItems: 'center' }}>
-          <IconButton
-            icon="camera"
-            mode="contained"
+          <MaterialIcons
+            name="camera"
             size={30}
+            color="red"
             onPress={() => {
               selectMedia('camera', {
                 mediaType: 'photo',
@@ -123,10 +123,10 @@ function SelectMediaComponent({
           <Text>Capture</Text>
         </View>
         <View style={{ alignItems: 'center' }}>
-          <IconButton
-            icon="video"
-            mode="contained"
+          <MaterialIcons
+            name="video"
             size={30}
+            color="red"
             onPress={() => {
               selectMedia('camera', {
                 mediaType: 'video',
@@ -139,10 +139,10 @@ function SelectMediaComponent({
           <Text>Record</Text>
         </View>
         <View style={{ alignItems: 'center' }}>
-          <IconButton
-            icon="image"
-            mode="contained"
+          <MaterialIcons
+            name="gallary"
             size={30}
+            color="red"
             onPress={() =>
               selectMedia('gallery', {
                 mediaType: 'photo',

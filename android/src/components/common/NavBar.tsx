@@ -5,6 +5,8 @@ import { toTitleCase } from '../../utils/toTitleCase';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { navigate } from '../../navigation/AppNavigator';
 import { UserService } from '../../services/UserService';
+import Drawer from './Drawer';
+import DrawerItems from './DrawerItems';
 
 const Navbar = () => {
     const { user, setUser } = useContext(UserContext);
@@ -30,7 +32,7 @@ const Navbar = () => {
                     <Image source={{ uri: user.dp }} style={styles.picture} />
                 ) : (
                     <Text style={styles.logoText}>
-                        {toTitleCase(user?.username || "Home")}
+                        {`Hi,` + toTitleCase(user?.username || "Home")}
                     </Text>
                 )}
             </View>
@@ -62,27 +64,10 @@ const Navbar = () => {
                     color="white"
                     onPress={openMenu}
                 />
-                
-                {menuVisible && (
-                    <View style={styles.menu}>
-                        <TouchableOpacity
-                            style={styles.menuItem}
-                            onPress={() => {
-                                navigate("HomeScreen");
-                                closeMenu();
-                            }}
-                        >
-                            <Text style={styles.menuText}>Home</Text>
-                        </TouchableOpacity>
-                        <View style={styles.divider} />
-                        <TouchableOpacity
-                            style={styles.menuItem}
-                            onPress={handleLogout}
-                        >
-                            <Text style={styles.logoutText}>Exit</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
+
+                <Drawer visible={menuVisible} handleClose={() => setMenuVisible(!menuVisible)} position='right'>
+                    <DrawerItems visible={menuVisible} setVisible={() => setMenuVisible(!menuVisible)} />
+                </Drawer>
             </View>
         </View>
     );

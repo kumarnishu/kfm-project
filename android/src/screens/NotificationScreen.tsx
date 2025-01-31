@@ -1,6 +1,6 @@
 import React from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
-import { StyleSheet, View, Text } from 'react-native';
+import {  View, Text } from 'react-native';
 import { AuthenticatedStackParamList } from '../navigation/AppNavigator';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'NotificationScreen'>;

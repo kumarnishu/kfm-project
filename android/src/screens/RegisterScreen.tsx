@@ -22,7 +22,7 @@ function RegisterScreen({ navigation }: Props) {
     { body: CreateOrEditCustomerDto }
   >(new UserService().Signup, {
     onSuccess: () => {
-      Alert.alert('Success', `${formik.values.name}, thank you for joining us!`);
+      setAlert({ message: `${formik.values.name}, thank you for joining us!`, type: 'alert', color: 'success'});
       navigation.navigate('LoginScreen');
     },
     onError: (error) => {
