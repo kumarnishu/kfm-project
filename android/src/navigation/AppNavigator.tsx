@@ -150,7 +150,6 @@ const AppNavigator = () => {
     )
   return (
     <NavigationContainer ref={navigationRef}>
-      <Navbar />
       <AuthenticatedNavigator />
       {alert && <AlertComponent />}
     </NavigationContainer>

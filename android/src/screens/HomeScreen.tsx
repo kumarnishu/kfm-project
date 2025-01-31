@@ -4,6 +4,7 @@ import { AuthenticatedStackParamList, navigate } from '../navigation/AppNavigato
 import { UserContext } from '../contexts/UserContext';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
 import { toTitleCase } from '../utils/toTitleCase';
+import Navbar from '../components/common/NavBar';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'HomeScreen'>;
 type MenuItemProps = { title: string, image: any, onClick: () => void };
@@ -74,6 +75,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
+      <Navbar />
       <View style={styles.body}>
         <FlatList
           data={data}
@@ -96,7 +98,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   body: {
     flex: 1,
-    paddingVertical:10
+    paddingVertical: 10
   },
   card: {
     flex: 1,
