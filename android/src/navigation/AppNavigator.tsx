@@ -8,7 +8,6 @@ import { UserContext } from '../contexts/UserContext';
 import NotificationScreen from '../screens/NotificationScreen';
 import { AlertContext } from '../contexts/AlertContext';
 import { Alert } from 'react-native';
-// import PushNotification from 'react-native-push-notification';
 import VideoLoader from "../components/common/VideoLoader"
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -19,7 +18,9 @@ import Navbar from '../components/common/NavBar';
 export const navigationRef = createNavigationContainerRef();
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { CustomerDetailsScreen, EngineerDetailsScreen, MachineDetailsScreen, ProductDetailsScreen, ServiceRequestDetailsScreen, SpareDetailsScreen, StaffDetailsScreen } from "../screens/details"
+import { CustomersScreen, EngineersScreen, MachinesScreen, ProductsScreen, ServiceRequestsScreen, SparesScreen, StaffsScreen } from "../screens/main"
+import { setupInterceptors } from '../services/utils/axiosIterceptor';
 
 export const navigate = (name: string, params?: object) => {
   if (navigationRef.isReady()) {
@@ -69,7 +70,7 @@ const PublicStack = createStackNavigator<PublicStackParamList>();
 
 const AuthenticatedNavigator = () => (
   <AuthenticatedStack.Navigator initialRouteName="HomeScreen" screenOptions={{ animation: 'fade', headerShown: false }}>
-   <AuthenticatedStack.Screen name="HomeScreen" component={HomeScreen} />
+    <AuthenticatedStack.Screen name="HomeScreen" component={HomeScreen} />
     <AuthenticatedStack.Screen name="NotificationScreen" component={NotificationScreen} />
     <AuthenticatedStack.Screen name="CustomersScreen" component={CustomersScreen} />
     <AuthenticatedStack.Screen name="CustomerDetailsScreen" component={CustomerDetailsScreen} />
@@ -129,6 +130,11 @@ const AppNavigator = () => {
     let token = await messaging().getToken()
     AsyncStorage.setItem('fcm_token', token);
   }
+
+  useEffect(() => {
+    setupInterceptors()
+  }, [])
+
   if (isLoading)
     return (
       <NavigationContainer>
@@ -144,8 +150,8 @@ const AppNavigator = () => {
     )
   return (
     <NavigationContainer ref={navigationRef}>
-          <Navbar />
-          <AuthenticatedNavigator />
+      <Navbar />
+      <AuthenticatedNavigator />
       {alert && <AlertComponent />}
     </NavigationContainer>
   );
