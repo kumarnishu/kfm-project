@@ -44,17 +44,13 @@ const CustomerDetailsScreen = ({ route, navigation }) => {
     });
   };
 
-  const openWhatsApp = (phoneNumber, message) => {
+  const openWhatsApp = async (phoneNumber, message) => {
     const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
-    Linking.canOpenURL(url)
-      .then((supported) => {
-        if (supported) {
-          return Linking.openURL(url);
-        } else {
-          setAlert({ message: 'WhatsApp is not installed on your device.', type: 'alert' });
-        }
-      })
-      .catch((err) => console.error("Error:", err));
+    const supported = await Linking.canOpenURL(url);   
+    if (supported)
+      await Linking.openURL(url);
+    else
+      setAlert({ message: 'Could not Open WhatsApp' })
   };
 
   useEffect(() => {
@@ -94,7 +90,10 @@ const CustomerDetailsScreen = ({ route, navigation }) => {
           <MaterialIcons name="add-call" size={24} color="white" />
           <Text style={{ color: 'white' }}>Call</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.whatsappButton} onPress={() => openWhatsApp(`91${item.mobile}`, 'Hi Dear,')}>
+        <TouchableOpacity style={styles.whatsappButton} onPress={() => {
+          openWhatsApp(`91${item.mobile}`, 'Hi Dear,')
+        }
+        }>
           <FontAwesome name="whatsapp" size={24} color="white" />
           <Text style={{ color: 'white' }}>Whatsapp</Text>
         </TouchableOpacity>
@@ -192,10 +191,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#ffffff',
     padding: 15,
-    marginTop:4,
+    marginTop: 4,
     borderRadius: 12,
     elevation: 3,
-    gap:10,
+    gap: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

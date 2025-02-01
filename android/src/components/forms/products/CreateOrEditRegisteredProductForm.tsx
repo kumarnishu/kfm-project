@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {
-    View, Text, TextInput, Button, Pressable, StyleSheet
+    View, Text, TextInput, Button, Pressable, StyleSheet,
+    TouchableOpacity
 } from 'react-native';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -18,6 +19,8 @@ import { CreateOrEditRegisteredProductDto, GetRegisteredProductDto } from '../..
 import { CustomerService } from "../../../services/CustomerService"
 import { DropDownDto } from '../../../dtos/DropDownDto';
 import { MachineService } from '../../../services/MachineService';
+import SingleSelectComponentDialog from '../../common/SingleSelectComponentDialog';
+import MultiSelectComponentDialog from '../../common/MultiSelectComponentDialog';
 
 
 
@@ -28,6 +31,7 @@ function CreateOrEditRegisteredProductForm({
     product?: GetRegisteredProductDto;
     setDialog: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
+    const [dialog2, setDialog2] = useState<string>();
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [isWarrantyPickerVisible, setWarrantyPickerVisibility] = useState(false);
     const { setAlert } = useContext(AlertContext);
@@ -58,7 +62,7 @@ function CreateOrEditRegisteredProductForm({
     const formik = useFormik({
         initialValues: {
             customer: product ? product.customer.id : '',
-            sl_no: product ? product.sl_no :0,
+            sl_no: product ? product.sl_no : 0,
             installationDate: product ? moment(product.installationDate).format("DD/MM/YYYY") : '',
             warrantyUpto: product ? moment(product.warrantyUpto).format("DD/MM/YYYY") : '',
             machine: product ? product.machine.id : ''
@@ -100,9 +104,26 @@ function CreateOrEditRegisteredProductForm({
             {formik.touched.sl_no && formik.errors.sl_no && (
                 <Text style={styles.errorText}>{formik.errors.sl_no}</Text>
             )}
+            <TouchableOpacity style={{ borderRadius: 15, marginBottom: 10 }} onPress={() => setDialog2('SingleSelectComponentDialog')} disabled={isLoading}>
+                <TextInput
+                    placeholder="Machine1"
+                    readOnly
+                    placeholderTextColor={'black'}
+                    style={styles.searchInput}
+                />
 
+            </TouchableOpacity>
+            <TouchableOpacity style={{ borderRadius: 15, marginBottom: 10 }} onPress={() => setDialog2('MultiSelectComponentDialog')} disabled={isLoading}>
+                <TextInput
+                    placeholder="5 Machines Selected"
+                    readOnly
+                    placeholderTextColor={'black'}
+                    style={styles.searchInput}
+                />
+
+            </TouchableOpacity>
             {/* Customer Picker */}
-            <Picker
+            {/* <Picker
                 selectedValue={formik.values.customer}
                 onValueChange={formik.handleChange('customer')}
                 style={styles.picker}
@@ -114,10 +135,10 @@ function CreateOrEditRegisteredProductForm({
             </Picker>
             {formik.touched.customer && formik.errors.customer && (
                 <Text style={styles.errorText}>{formik.errors.customer}</Text>
-            )}
+            )} */}
 
             {/* Machine Picker */}
-            <Picker
+            {/* <Picker
                 selectedValue={formik.values.machine}
                 onValueChange={formik.handleChange('machine')}
                 style={styles.picker}
@@ -129,7 +150,7 @@ function CreateOrEditRegisteredProductForm({
             </Picker>
             {formik.touched.machine && formik.errors.machine && (
                 <Text style={styles.errorText}>{formik.errors.machine}</Text>
-            )}
+            )} */}
 
             {/* Installation Date */}
             <Pressable onPress={() => setDatePickerVisibility(true)}>
@@ -180,11 +201,11 @@ function CreateOrEditRegisteredProductForm({
             <View style={styles.divider} />
 
             {/* Submit Button */}
-            <Button
-                title="Submit"
-                onPress={() => formik.handleSubmit()}
-                disabled={isLoading}
-            />
+            <TouchableOpacity style={{ backgroundColor: 'red', padding: 10, borderRadius: 15 }} onPress={() => formik.handleSubmit()} disabled={isLoading}>
+                <Text style={{ fontSize: 16, color: 'white', textAlign: 'center' }}>Submit</Text>
+            </TouchableOpacity>
+            <SingleSelectComponentDialog dialog={dialog2} setDialog={setDialog2} />
+            <MultiSelectComponentDialog dialog={dialog2} setDialog={setDialog2} />
         </View>
     );
 }
@@ -193,6 +214,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 10,
+    },
+    searchInput: {
+        backgroundColor: 'white',
+        borderRadius: 8,
+        padding: 12,
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: '#ddd',
     },
     title: {
         fontSize: 30,
