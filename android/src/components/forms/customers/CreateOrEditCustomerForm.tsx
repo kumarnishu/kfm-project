@@ -30,12 +30,14 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
   const formik = useFormik({
     initialValues: {
       name: customer ? customer.name : "shdsd",
+      username: customer ? customer.owner : "",
       email: customer ? customer.email : "abc@gm.com",
       mobile: customer ? customer.mobile : "7056943283",
       address: customer ? customer.address : "bahdurgarh",
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Required').min(4).max(100),
+      username: Yup.string().required('Required').min(4).max(100),
       email: Yup.string().required('Required').email('Invalid email'),
       address: Yup.string().required('Required Address').min(4).max(300),
       mobile: Yup.string()
@@ -66,7 +68,7 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
 
       <TextInput
         style={styles.input}
-        placeholder="Name"
+        placeholder="Company Name"
         value={formik.values.name}
         onChangeText={formik.handleChange('name')}
         onBlur={formik.handleBlur('name')}
@@ -74,7 +76,16 @@ function CreateOrEditCustomerForm({ customer, setDialog }: { customer?: GetCusto
       {formik.touched.name && formik.errors.name && (
         <Text style={styles.errorText}>{formik.errors.name}</Text>
       )}
-
+      <TextInput
+        style={styles.input}
+        placeholder="User Name"
+        value={formik.values.username}
+        onChangeText={formik.handleChange('username')}
+        onBlur={formik.handleBlur('username')}
+      />
+      {formik.touched.username && formik.errors.username && (
+        <Text style={styles.errorText}>{formik.errors.username}</Text>
+      )}
       <TextInput
         style={styles.input}
         placeholder="Email"
