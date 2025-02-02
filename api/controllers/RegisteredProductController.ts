@@ -15,8 +15,7 @@ export class RegisteredProductController {
             customer,
             warrantyUpto,
             installationDate,
-            amcStartDate,
-            amcEndDate
+            amcUpto
         } = req.body as CreateOrEditRegisteredProductDto
         if (!sl_no || !machine || !customer) {
             return res.status(400).json({ message: "please fill all required fields" })
@@ -24,7 +23,7 @@ export class RegisteredProductController {
 
         if (await RegisteredProduct.findOne({ sl_no: sl_no }))
             return res.status(400).json({ message: "already exists this product" })
-
+        console.log(req.body)
         let product = await new RegisteredProduct({
             sl_no, machine, customer,
             created_at: new Date(),
@@ -36,10 +35,8 @@ export class RegisteredProductController {
             product.warrantyUpto = new Date(warrantyUpto);
         if (installationDate)
             product.installationDate = new Date(installationDate);
-        if (amcStartDate)
-            product.installationDate = new Date(amcStartDate);
-        if (amcEndDate)
-            product.installationDate = new Date(amcEndDate);
+        if (amcUpto)
+            product.installationDate = new Date(amcUpto);
         await product.save()
         return res.status(201).json({ message: "success" })
 
@@ -53,8 +50,9 @@ export class RegisteredProductController {
             sl_no,
             machine,
             customer,
-            amcStartDate,
-            amcEndDate
+            amcUpto,
+            warrantyUpto
+
         } = req.body as CreateOrEditRegisteredProductDto
         if (!sl_no || !machine || !customer) {
             return res.status(400).json({ message: "please fill all required fields" })
@@ -75,10 +73,10 @@ export class RegisteredProductController {
         }
         productTmp.updated_at = new Date();
 
-        if (amcStartDate)
-            productTmp.amcStartDate = new Date(amcStartDate);
-        if (amcEndDate)
-            productTmp.amcEndDate = new Date(amcEndDate);
+        if (amcUpto)
+            productTmp.amcUpto = new Date(amcUpto);
+        if (warrantyUpto)
+            productTmp.warrantyUpto = new Date(warrantyUpto);
         if (req.user)
             productTmp.updated_by = req.user
         await productTmp.save()
@@ -105,8 +103,7 @@ export class RegisteredProductController {
                 customer: { id: product.customer._id, label: product.customer.name },
                 warrantyUpto: product.warrantyUpto ? new Date(product.warrantyUpto).toString() : "",
                 installationDate: product.installationDate ? new Date(product.installationDate).toString() : "",
-                amcStartDate: product.amcStartDate ? new Date(product.amcStartDate).toString() : "",
-                amcEndDate: product.amcEndDate ? new Date(product.amcEndDate).toString() : ""
+                amcUpto: product.amcUpto ? new Date(product.amcUpto).toString() : ""
             })
         }
         return res.status(200).json(result)
@@ -130,9 +127,7 @@ export class RegisteredProductController {
                 customer: { id: product.customer._id, label: product.customer.name },
                 warrantyUpto: product.warrantyUpto ? new Date(product.warrantyUpto).toString() : "",
                 installationDate: product.installationDate ? new Date(product.installationDate).toString() : "",
-                amcStartDate: product.amcStartDate ? new Date(product.amcStartDate).toString() : "",
-                amcEndDate: product.amcEndDate ? new Date(product.amcEndDate).toString() : "",
-              
+                amcUpto: product.amcUpto ? new Date(product.amcUpto).toString() : "",
             })
         }
         return res.status(200).json(result)

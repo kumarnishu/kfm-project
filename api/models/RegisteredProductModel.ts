@@ -22,8 +22,7 @@ const RegisteredProductSchema = new mongoose.Schema<IRegisteredProduct, mongoose
     ,
     warrantyUpto: Date,
     installationDate: Date,
-    amcStartDate: Date,
-    amcEndDate: Date,
+    amcUpto: Date,
     created_at: {
         type: Date,
         default: new Date(),

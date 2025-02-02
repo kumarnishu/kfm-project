@@ -14,7 +14,7 @@ type Props = {
 function ViewMediaDialog({ media, dialog, setDialog }: Props) {
  const { width, height } = Dimensions.get('window'); 
     return (
-        <Dialog fullScreen={false} visible={dialog === 'ViewMediaDialog'} handleClose={() => setDialog(undefined)}
+        <Dialog fullScreen={true} visible={dialog === 'ViewMediaDialog'} handleClose={() => setDialog(undefined)}
         >
             {media.type == 'photo' ?
                 <Image

@@ -12,17 +12,21 @@ import { AlertContext } from '../../../contexts/AlertContext';
 import { ServiceRequestService } from '../../../services/ServiceRequestService';
 import SelectMediaComponent from '../../../components/common/SelectMediaComponent';
 import { GetRegisteredProductDto } from '../../../dtos/RegisteredProducDto';
+import { DropDownDto } from '../../../dtos/DropDownDto';
 
 function NewServiceRequestsForm({
     product,
     setDialog,
+    type
+
 }: {
-    product: GetRegisteredProductDto;
+    product: GetRegisteredProductDto; type: DropDownDto;
     setDialog: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
     const { setAlert } = useContext(AlertContext);
+    const [validationMessage, setValidationMessage] = useState("")
     const [files, setFiles] = useState<{ asset: Asset | null, id: number }[]>([]);
-
+    const [validated, setValidated] = useState(false)
     const { mutate, isSuccess, isLoading } = useMutation<
         AxiosResponse<{ message: string }>,
         BackendError,
@@ -39,7 +43,7 @@ function NewServiceRequestsForm({
             product: product._id,
         },
         validationSchema: Yup.object({
-            problem: Yup.string().required('Required').max(100),
+            problem: Yup.string().required('Required').max(1000),
             product: Yup.string().required()
         }),
         onSubmit: (values) => {
@@ -62,6 +66,16 @@ function NewServiceRequestsForm({
     });
 
     useEffect(() => {
+        if (type.id == "service") {
+            setValidationMessage("Your Warranty Expired. So You could not proceed further")
+            setValidated(false)
+        }
+        else {
+            setValidated(true)
+        }
+    }, [type])
+
+    useEffect(() => {
         if (isSuccess) {
             setAlert({ message: `Successfully created a service request`, color: 'success' });
             setTimeout(() => {
@@ -73,8 +87,8 @@ function NewServiceRequestsForm({
 
     return (
         <ScrollView>
-            <View style={styles.container}>
-                <Text style={styles.headerText}>Service Request</Text>
+            {validated ? <View style={styles.container}>
+                <Text style={styles.headerText}>{type.label}</Text>
                 <TextInput
                     style={[styles.input, styles.textArea]}
                     placeholder="Describe Problem"
@@ -93,7 +107,10 @@ function NewServiceRequestsForm({
                     onPress={() => formik.handleSubmit()}
                     disabled={isLoading}
                 />
-            </View>
+            </View> :
+                <View style={{ flex: 1, height: '100%', justifyContent: 'center' }}>
+                    <Text style={{ color: 'red', fontSize: 16 }}>{validationMessage}</Text>
+                </View>}
         </ScrollView>
     );
 }

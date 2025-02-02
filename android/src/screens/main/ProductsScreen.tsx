@@ -13,12 +13,18 @@ import moment from 'moment';
 import NewServiceRequestsDialog from '../../components/dialogs/service requests/NewServiceRequestsDialog';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { GetRegisteredProductDto } from '../../dtos/RegisteredProducDto';
+import SelectWithRadioButtonPickerDialog from '../../components/dialogs/picker/SelectWithRadioButtonPickerDialog';
+import { DropDownDto } from '../../dtos/DropDownDto';
+import { AlertContext } from '../../contexts/AlertContext';
+import { isvalidDate } from '../../utils/datesHelper';
 
 type Props = StackScreenProps<AuthenticatedStackParamList, 'ProductsScreen'>;
 
 const ProductsScreen: React.FC<Props> = ({ navigation }) => {
   const [products, setProducts] = useState<GetRegisteredProductDto[]>([]);
   const [dialog, setDialog] = useState<string>();
+  const [type, setType] = useState<DropDownDto>()
+  const [types, setTypes] = useState<DropDownDto[]>([])
   const [product, setProduct] = useState<GetRegisteredProductDto>();
   const [prefilteredProducts, setPrefilteredProducts] = useState<GetRegisteredProductDto[]>([]);
   const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
@@ -27,13 +33,25 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
   const [filter, setFilter] = useState<string | undefined>();
   const { data, isSuccess, isLoading, refetch, isError } = useQuery<AxiosResponse<GetRegisteredProductDto[]>, BackendError>(["products"], async () => new RegisteredProductService().GetAllRegisteredProducts());
 
-  console.log(products);
   // Pull-to-refresh handler
   const onRefresh = async () => {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
   };
+
+  useEffect(() => {
+    let _types: DropDownDto[] = []
+    //@ts-ignore
+    if (product) {
+      !isvalidDate(new Date(product && product?.installationDate)) && _types.push({ id: 'installation', label: 'Installation Request' })
+      _types.push({ id: 'service', label: 'Service Request' })
+      _types.push({ id: 'amc', label: 'AMC' })
+      _types.push({ id: 'walk_in', label: 'Walk In' })
+      setTypes(_types)
+    }
+  }, [product])
+  
 
   useEffect(() => {
     if (filter) {
@@ -47,6 +65,7 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
       setProducts(prefilteredProducts);
   }, [filter]);
 
+
   useEffect(() => {
     if (isSuccess) {
       setProducts(data.data);
@@ -57,34 +76,36 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
   // Render each product as a card
   const renderCard = ({ item }: { item: GetRegisteredProductDto }) => (
     <View style={styles.card}>
-      <Text style={styles.subtitle}>Sl.No.{item.sl_no}     Machine : {item.machine.label}</Text>
+      <Text style={[styles.subtitle, { padding: 5, textTransform: 'uppercase', backgroundColor: 'whitesmoke', marginBottom: 0 }]}>{item.customer.label}</Text>
       <View style={styles.cardContent}>
-        <View>
-          <Image style={styles.image} source={item.machine_photo !== "" ? { uri: item.machine_photo } : require("../../assets/img/placeholder.png")} />
-        </View>
+        <Image style={styles.image} source={item.machine_photo !== "" ? { uri: item.machine_photo } : require("../../assets/img/placeholder.png")} />
         <View style={styles.textContainer}>
-          <Text style={[styles.subtitle, { paddingLeft: 0 }]}>{item.customer.label}</Text>
-          <Text style={styles.paragraph}>{item.installationDate ? `Installation Date : ${moment(item.installationDate).format("DD-MM-YYYY")}` : 'Not Installed'}</Text>
-          <Text style={styles.paragraph}>{item.warrantyUpto ? `Warranty upto : ${moment(item.warrantyUpto).format("DD-MM-YYYY")}` : 'Not Applicable'}</Text>
+          <Text style={[styles.label, { fontWeight: 'bold', fontSize: 18 }]}>{item.sl_no}</Text>
+          <Text style={[styles.label, { fontWeight: 'bold', paddingVertical: 5 }]}>{item.machine.label}</Text>
+          <Text style={styles.label}>Installation Date</Text>
+          <Text style={styles.paragraph}>{item.installationDate ? `${moment(item.installationDate).format("DD-MM-YYYY")}` : 'Not Installed'}</Text>
+          <Text style={styles.label}>Warranty upto</Text>
+          <Text style={styles.paragraph}>{item.warrantyUpto ? `${moment(item.warrantyUpto).format("DD-MM-YYYY")}` : 'Not In Warranty'}</Text>
+          <Text style={styles.label}>AMC upto</Text>
+          <Text style={styles.paragraph}>{item.amcUpto ? `${moment(item.amcUpto).format("DD-MM-YYYY")}` : 'Not In AMC'}</Text>
           {user?.role == "admin" && (
             <TouchableOpacity onPress={() => {
               setProduct(item);
               setDialog('CreateOrEditRegisteredProductDialog');
             }}>
-              <Text style={styles.editButton}>Edit item</Text>
+              <Text style={styles.editButton}>Edit Product</Text>
             </TouchableOpacity>
           )}
         </View>
       </View>
       <TouchableOpacity
-        style={[styles.serviceRequestButton, item?.warrantyUpto && new Date(item.warrantyUpto) <= new Date() ? styles.disabledButton : null]}
-        disabled={item?.warrantyUpto !== "" && new Date(item.warrantyUpto) <= new Date()}
+        style={[styles.serviceRequestButton]}
         onPress={() => {
           setProduct(item);
-          setDialog('NewServiceRequestsDialog');
+          setDialog('SelectWithRadioButtonPickerDialog');
         }}
       >
-        <Text style={styles.serviceRequestButtonText}>New Service Request</Text>
+        <Text style={styles.serviceRequestButtonText}>Create Service Request</Text>
       </TouchableOpacity>
     </View>
   );
@@ -111,14 +132,13 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      {/* Title */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: 350 }}>
+    <>
+      <View style={styles.topbar}>
         <Text style={styles.title}>Registered Products</Text>
         {user?.role == "admin" && (
           <MaterialIcons
             name="add-circle"
-            size={40}
+            size={50}
             color="red"
             onPress={() => {
               setProduct(undefined);
@@ -127,38 +147,55 @@ const ProductsScreen: React.FC<Props> = ({ navigation }) => {
           />
         )}
       </View>
-      <TextInput placeholder='Search' style={{ backgroundColor: 'white', marginBottom: 10, padding: 10 }} onChangeText={(val) => setFilter(val)} />
+      <View style={styles.container}>
+        <TextInput placeholder='Search' style={styles.searchInput} onChangeText={(val) => setFilter(val)} />
 
-      {/* Product List */}
-      {products && (
-        <FlatList
-          data={products}
-          keyExtractor={(item) => item._id}
-          renderItem={renderCard}
-          refreshing={refreshing} // Indicates if the list is refreshing
-          onRefresh={onRefresh} // Handler for pull-to-refresh
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>No products found.</Text>
-          }
-        />
-      )}
+        {/* Product List */}
+        {products && (
+          <FlatList
+            data={products}
+            keyExtractor={(item) => item._id}
+            renderItem={renderCard}
+            refreshing={refreshing} // Indicates if the list is refreshing
+            onRefresh={onRefresh} // Handler for pull-to-refresh
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>No products found.</Text>
+            }
+          />
+        )}
 
-      <CreateOrEditRegisteredProductDialog product={product} dialog={dialog} setDialog={setDialog} />
-      <NewServiceRequestsDialog product={product} dialog={dialog} setDialog={setDialog} />
-    </View>
+        <CreateOrEditRegisteredProductDialog product={product} dialog={dialog} setDialog={setDialog} />
+        {type && <NewServiceRequestsDialog type={type} product={product} dialog={dialog} setDialog={setDialog} />}
+        <SelectWithRadioButtonPickerDialog options={types} value={type} setValue={setType} dialog={dialog} setDialog={setDialog} />
+      </View>
+    </>
+
   );
 };
 
 const styles = StyleSheet.create({
+  topbar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 2
+  },
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: '#f9f9f9',
   },
-  card: {
-    marginBottom: 16,
+  searchInput: {
     backgroundColor: 'white',
-    borderRadius: 12, // Rounded corners
+    paddingTop: 20,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: 'grey',
+    paddingLeft: 10,
+    fontSize: 16,
+    borderRadius: 2
+  },
+  card: {
+    backgroundColor: 'white',
     elevation: 4, // Android shadow
     shadowColor: '#000', // iOS shadow
     shadowOffset: { width: 0, height: 2 }, // iOS shadow offset
@@ -168,57 +205,74 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flexDirection: 'row',
-    padding: 16, // Add padding inside the card
   },
   image: {
-    width: 150,
-    height: 200,
-    borderRadius: 8, // Rounded image corners
+    width: 220,
     borderColor: '#ddd', // Light border
     borderWidth: 1,
     marginRight: 15,
   },
   textContainer: {
-    flex: 1,
-    paddingLeft: 10,
+    paddingBottom: 5
   },
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
+    textTransform: 'uppercase',
     color: '#333',
     paddingLeft: 10,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 18,
+    marginLeft: 5,
+    padding: 10,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  companyText: {
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
     paddingLeft: 10,
     marginBottom: 8,
+    textTransform: 'uppercase'
+  },
+  label: {
+    fontSize: 16,
+    textTransform: 'capitalize',
   },
   paragraph: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#666',
     marginBottom: 10,
     textTransform: 'capitalize',
   },
   editButton: {
-    color: '#6200ea',
+    color: 'green',
     fontSize: 16,
+    fontWeight: 'bold',
+    marginRight: 15,
     textAlign: 'left',
-    marginTop: 8,
   },
   serviceRequestButton: {
     padding: 15,
-    backgroundColor: '#6200ea',
+    backgroundColor: 'red',
   },
   serviceRequestButtonText: {
+    fontSize: 20,
     color: 'white',
-    fontSize: 16,
+    fontWeight: 'bold',
     textAlign: 'left',
   },
+  disabledButtonText: {
+    fontSize: 16,
+    color: 'grey',
+    textAlign: 'center',
+  },
   disabledButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: 'whitesmoke',
   },
   retryButton: {
     backgroundColor: '#6200ea',

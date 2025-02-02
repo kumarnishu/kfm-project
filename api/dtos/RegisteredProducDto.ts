@@ -5,8 +5,7 @@ export type CreateOrEditRegisteredProductDto = {
     machine: string,
     customer: string,
     warrantyUpto?: string,
-    amcEndDate?: string,
-    amcStartDate?: string
+    amcUpto?: string,
     installationDate?: string,
 }
 
@@ -19,8 +18,7 @@ export type GetRegisteredProductDto = {
     customer: DropDownDto,
     warrantyUpto: string,
     installationDate: string,
-    amcStartDate: string,
-    amcEndDate: string
+    amcUpto: string
 }
 
 

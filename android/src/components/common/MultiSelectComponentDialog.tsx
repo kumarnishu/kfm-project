@@ -34,7 +34,7 @@ const MultiSelectComponentDialog= ({ dialog, setDialog }: Props) => {
   };
 
   return (
-    <Dialog fullScreen={false} visible={dialog === 'MultiSelectComponentDialog'} handleClose={() => setDialog(undefined)}
+    <Dialog fullScreen={true} visible={dialog === 'MultiSelectComponentDialog'} handleClose={() => setDialog(undefined)}
     >
       <View style={styles.container}>
         <Text style={styles.label}>Select Options:</Text>

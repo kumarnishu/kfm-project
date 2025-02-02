@@ -3,7 +3,7 @@ import { View, Image, PermissionsAndroid, Platform, Text } from 'react-native';
 import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { AlertContext } from '../../contexts/AlertContext';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 async function requestCameraPermission() {
   if (Platform.OS === 'android') {
@@ -84,17 +84,17 @@ function SelectPhotoComponent({
       }
       <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginVertical: 10 }}>
         <View style={{ alignItems: 'center' }}>
-        <MaterialIcons
+          <MaterialIcons
             name="camera"
             size={30}
             color="red"
             onPress={() => selectPhoto('camera')}
           />
-          <Text>Capture</Text> 
+          <Text>Capture</Text>
         </View>
         <View style={{ alignItems: 'center' }}>
-        <MaterialIcons
-            name="gallary"
+          <FontAwesome
+            name="photo"
             size={30}
             color="red"
             onPress={() => selectPhoto('camera')}

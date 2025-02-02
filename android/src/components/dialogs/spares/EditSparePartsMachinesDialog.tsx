@@ -41,7 +41,7 @@ function EditSparePartsMachinesDialog({ part, dialog, selectedMachines, setSelec
     }
 
     return (
-       <Dialog fullScreen={false} visible={dialog === 'EditSparePartsMachinesDialog'} handleClose={() => setDialog(undefined)}
+       <Dialog fullScreen={true} visible={dialog === 'EditSparePartsMachinesDialog'} handleClose={() => setDialog(undefined)}
         >
             <Text>{part.partno}</Text>
             {/* <MultiSelectComponent selectedItems={selectedMachines} setSelectedItems={setSelectedMachines} items={machinesData?.data || []} /> */}

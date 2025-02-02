@@ -12,7 +12,7 @@ type Props = {
 
 function CreateOrEditStaffDialog({ staff, customer, dialog, setDialog }: Props) {
     return (
-       <Dialog fullScreen={false} visible={dialog === 'CreateOrEditStaffDialog'} handleClose={() => setDialog(undefined)}
+       <Dialog fullScreen={true} visible={dialog === 'CreateOrEditStaffDialog'} handleClose={() => setDialog(undefined)}
         >
             <CreateOrEditStaffForm customer={customer} staff={staff} setDialog={setDialog} />
         </Dialog>

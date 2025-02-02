@@ -3,7 +3,8 @@ import { View, PermissionsAndroid, Platform, Image, TouchableOpacity, StyleSheet
 import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { AlertContext } from '../../contexts/AlertContext';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
+import Entypo from 'react-native-vector-icons/Entypo';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 async function requestCameraPermission() {
   if (Platform.OS === 'android') {
@@ -123,8 +124,8 @@ function SelectMediaComponent({
           <Text>Capture</Text>
         </View>
         <View style={{ alignItems: 'center' }}>
-          <MaterialIcons
-            name="video"
+          <Entypo
+            name="video-camera"
             size={30}
             color="red"
             onPress={() => {
@@ -139,8 +140,8 @@ function SelectMediaComponent({
           <Text>Record</Text>
         </View>
         <View style={{ alignItems: 'center' }}>
-          <MaterialIcons
-            name="gallary"
+          <FontAwesome
+            name="photo"
             size={30}
             color="red"
             onPress={() =>

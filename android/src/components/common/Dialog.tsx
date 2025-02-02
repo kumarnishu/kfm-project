@@ -18,7 +18,7 @@ const Dialog = ({ visible, handleClose, fullScreen, children }: Props) => {
       transparent={isFullScreen ? false : true}
       visible={visible}
       onRequestClose={handleClose}>
-      <View  style={[isFullScreen ? styles.fullScreen : styles.default, { backgroundColor: 'white' }]}>
+      <View style={[isFullScreen ? styles.fullScreen : styles.default, { backgroundColor: isFullScreen ? 'white' : 'transparent' }]}>
         {children}
       </View>
     </Modal >
@@ -30,9 +30,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   default: {
-    flex:1,
-    backgroundColor:'none',
-    height:'70%',
+    flex: 1,
+    backgroundColor: 'none',
+    height: '70%',
     shadowColor: '#000',
     shadowOffset: {
       width: 2,

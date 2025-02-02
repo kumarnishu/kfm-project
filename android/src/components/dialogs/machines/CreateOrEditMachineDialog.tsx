@@ -10,7 +10,7 @@ type Props = {
 
 function CreateOrEditMachineDialog({ machine, dialog, setDialog }: Props) {
     return (
-       <Dialog fullScreen={false} visible={dialog === 'CreateOrEditMachineDialog'} handleClose={() => setDialog(undefined)}
+       <Dialog fullScreen={true} visible={dialog === 'CreateOrEditMachineDialog'} handleClose={() => setDialog(undefined)}
         >
             <CreateOrEditMachineForm machine={machine}  setDialog={setDialog} />
         </Dialog>
